@@ -1,4 +1,4 @@
-GitHub du Projet HomeServices
+##GitHub du Projet HomeServices##
 
 
 Cloner le projet : 
@@ -8,6 +8,7 @@ Cloner le projet :
 - Ouvrir l'onglet "Source Control" (en haut à gauche)
 - Cloner un projet
 - Choisir HS
+
 
 Commit un changement :
 - Ouvrir l'onglet Source Control
