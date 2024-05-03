@@ -8,6 +8,8 @@ Cloner le projet :
 - Ouvrir l'onglet "Source Control" (en haut à gauche)
 - Cloner un projet
 - Choisir HS
+- installer nodes_modules avec : "npm install" dans le terminal
+- lancer avec : "npx expo start"
 
 
 Commit un changement :
