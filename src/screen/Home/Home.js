@@ -9,11 +9,21 @@ function Home() {
         navigation.navigate('Urgence');
     };
 
+    const goToSignInPage = () => {
+        navigation.navigate('SignIn');
+    };
+
+    const goToSignUpPage = () => {
+        navigation.navigate('SignUp');
+    };
+
     return (
         <View>
             <Text>Welcome to the Home Page!</Text>
             <Text>This is the content of your home page.</Text>
             <Button title="Go to Urgence Page" onPress={goToUrgencePage} />
+            <Button title="Go to SignIn Page" onPress={goToSignInPage} />
+            <Button title="Go to SignUp Page" onPress={goToSignUpPage} />
         </View>
     );
 }
