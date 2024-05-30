@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingHorizontal: '5%',
+        paddingHorizontal: width * 0.05,
         paddingVertical: width * 0.05, 
     },
     contentContainer: {
