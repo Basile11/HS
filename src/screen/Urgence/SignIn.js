@@ -12,9 +12,8 @@ function SignIn({ navigation }) {
     };
 
     const handleSignIn = () => {
-        // Logic for sign in based on email, password, and isProfessional
-        // For example, you can send these details to your backend for authentication
-        navigation.navigate('UrgenceTabs'); // Navigate to UrgenceTabs after sign in
+        // navigation.navigate('UrgenceTabs'); // Navigate to UrgenceTabs after sign in
+        navigation.navigate('NavBar'); // Navigate to UrgenceTabs after sign in
     };
 
     return (
