@@ -1,10 +1,11 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StatusBar} from 'react-native';
 
 import Home from './src/screen/Home/Home';
-import SignIn from './src/screen/Urgence/SignIn';
-import SignUp from './src/screen/Urgence/SignUp';
+import SignIn from './src/screen/SignIn/SignIn';
+import SignUp from './src/screen/SignUp/SignUp';
 import Urgence from './src/screen/Urgence/Urgence';
 import Interventions from './src/screen/Interventions/Interventions';
 import Compte from './src/screen/Compte/Compte';
@@ -28,6 +29,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <NavigationContainer>
+      <StatusBar barStyle="light-content" />
       <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="SignIn" component={SignIn} />

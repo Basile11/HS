@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     },
 
 
+
     greeting: {
         fontSize: 30,
         fontWeight: 'bold',
@@ -181,6 +182,8 @@ const styles = StyleSheet.create({
     unselectedButtonText: {
         color: '#0041C4',
     },
+
+
     inputContainer: {
         width: '100%',
         marginBottom: width*0.15,
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: 13,
         marginBottom: 10,
     },
     forgotPasswordText: {
