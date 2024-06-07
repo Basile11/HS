@@ -8,7 +8,7 @@ import SignIn from './src/screen/SignIn/SignIn';
 import SignUp from './src/screen/SignUp/SignUp';
 
 import MesInformations from './src/screen/Compte/MesInformations/MesInformations';
-import UrgenceType from './src/screen/Urgence/Urgencetype/UrgenceType';
+import UrgenceType from './src/screen/Urgence/UrgenceType/UrgenceType';
 import UrgenceDetail from './src/screen/Urgence/UrgenceType/UrgenceDetail/UrgenceDetail';
 
 import NavBar from './src/components/NavBar/NavBar';
