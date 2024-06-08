@@ -10,7 +10,7 @@ import flecheretour from '../../../../assets/arrow-left-line.png'
 const { width } = Dimensions.get('window');
 
 function ProDispo({ route, navigation }) {
-    const { service, problemDescription, estimatedTime, images } = route.params;
+    const { service, problemDescription, estimatedTime, images, emergency } = route.params;
 
     const handleBack = () => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
@@ -44,8 +44,7 @@ function ProDispo({ route, navigation }) {
                                 rating={pro.rating}
                                 time={pro.time}
                                 price={pro.price}
-                                onPress={() => navigation.navigate('ProInfo', { pro })}
-
+                                onPress={() => navigation.navigate('ProInfo', { pro, service, problemDescription, estimatedTime, images, emergency })}
                             />
                             {index < professionals.length - 1 && <View style={styles.separator} />}
                         </View>

@@ -12,6 +12,7 @@ import UrgenceType from './src/screen/Urgence/UrgenceType/UrgenceType';
 import UrgenceDetail from './src/screen/Urgence/UrgenceType/UrgenceDetail/UrgenceDetail';
 import ProDispo from './src/screen/Urgence/ProDispo/ProDispo';
 import ProInfo from './src/screen/Urgence/ProInfo/ProInfo';
+import UrgenceFinal from './src/screen/Urgence/UrgenceFinal/UrgenceFinal';
 
 import NavBar from './src/components/NavBar/NavBar';
 
@@ -33,6 +34,7 @@ export default function App() {
         <Stack.Screen name="UrgenceDetail" component={UrgenceDetail} />
         <Stack.Screen name="ProDispo" component={ProDispo} />
         <Stack.Screen name="ProInfo" component={ProInfo} />
+        <Stack.Screen name="UrgenceFinal" component={UrgenceFinal} />
     
 
       </Stack.Navigator>

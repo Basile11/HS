@@ -56,6 +56,7 @@ function UrgenceDetail({ route, navigation }) {
             problemDescription,
             estimatedTime,
             images,
+            emergency
         });
     };
 
@@ -252,7 +253,6 @@ const styles = StyleSheet.create({
         width: width*0.25, // Largeur fixe pour les images
         height: width*0.35, 
         borderRadius: 10,
-        backgroundColor:'green',
         marginRight: 10,
     },
     addButton: {

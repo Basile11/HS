@@ -7,10 +7,14 @@ import Carte from '../../../../assets/Carte.png'
 const { width } = Dimensions.get('window');
 
 function ProInfo({ route, navigation }) {
-    const { pro } = route.params;
+    const { pro, service, problemDescription, estimatedTime, images, emergency } = route.params;
 
     const handleBack = () => {
         navigation.goBack();
+    };
+
+    const handleReserve = () => {
+        navigation.navigate('UrgenceFinal', { service, problemDescription, estimatedTime, images, emergency });
     };
 
     return (
@@ -54,7 +58,7 @@ function ProInfo({ route, navigation }) {
                         <Text style={styles.review}>Très efficace</Text>
                         <Text style={styles.review}>Travail soigné</Text> */}
                     </View>
-                    <TouchableOpacity style={styles.reserveButton}>
+                    <TouchableOpacity style={styles.reserveButton} onPress={handleReserve}>
                         <Text style={styles.reserveButtonText}>Réserver</Text>
                     </TouchableOpacity>
                 </ScrollView>
