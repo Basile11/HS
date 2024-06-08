@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TextInput, TouchableOpacity, Image, ScrollView, Alert, FlatList, Modal, Button } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
 import flecheretour from '../../../../../assets/arrow-left-line.png'
+import flecheretourbleu from '../../../../../assets/arrow-left-line (1).png'
+import poubelle from '../../../../../assets/delete-bin-2-line.png'
 
 const { width } = Dimensions.get('window');
 
@@ -9,20 +13,52 @@ function UrgenceDetail({ route, navigation }) {
     const [problemDescription, setProblemDescription] = useState('');
     const [estimatedTime, setEstimatedTime] = useState('');
     const [images, setImages] = useState([]);
+    // const [image, setImage] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false); // État pour gérer la visibilité de la modal
+    const [selectedImage, setSelectedImage] = useState(''); // État pour stocker l'URI de l'image sélectionnée
+
     const displayEmergency = emergency === 'Autre' ? 'Quel est votre problème ?' : emergency;
 
     const handleBack = () => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
     };
 
-    const handleImagePicker = () => {
-        // Implement image picker functionality
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+    
+        console.log(result);
+    
+        if (!result.canceled) {
+          setImages([...images, result.assets[0].uri]);
+        }
     };
 
-    const handleSearchProfessional = () => {
-        // Implement search professional functionality
+    const openImageModal = (uri) => {
+        setSelectedImage(uri);
+        setModalVisible(true);
+    };
+
+    const deleteImage = (uri) => {
+        const updatedImages = images.filter(image => image !== uri);
+        setImages(updatedImages);
+        setModalVisible(false);
     };
     
+    const handleSearchProfessional = () => {
+        navigation.navigate('ProDispo', {
+            service,
+            problemDescription,
+            estimatedTime,
+            images,
+        });
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -56,7 +92,6 @@ function UrgenceDetail({ route, navigation }) {
                                 ]}
                                 onPress={() => setEstimatedTime(time)}
                             >
-                                {/* <Text style={styles.timeButtonText}>{time}</Text> */}
                                 <Text style={[
                                     styles.timeButtonText,
                                     estimatedTime === time && styles.timeButtonTextSelected
@@ -67,19 +102,51 @@ function UrgenceDetail({ route, navigation }) {
                         ))}
                     </View>
 
-                    <Text style={styles.label}>Ajouter une photo :</Text>
-                    <View style={styles.imagesContainer}>
-                        {images.map((img, index) => (
-                            <Image key={index} source={{ uri: img.uri }} style={styles.image} />
-                        ))}
-                        <TouchableOpacity onPress={handleImagePicker} style={styles.addButton}>
-                            <Text style={styles.addButtonText}>+</Text>
-                        </TouchableOpacity>
-                    </View>
+
+                    <TouchableOpacity onPress={pickImage} >
+                        <Text style={styles.addButtonText}>Ajouter une photo</Text>
+                    </TouchableOpacity>
+
+                    <FlatList
+                        horizontal={true} // Configurez la FlatList pour qu'elle ait une direction horizontale
+                        data={images}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity onPress={() => openImageModal(item)}>
+                                <Image source={{ uri: item }} style={styles.image} />
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        contentContainerStyle={styles.imagesContainer} // Style de conteneur pour la FlatList
+                    />
 
                     <TouchableOpacity onPress={handleSearchProfessional} style={styles.searchButton}>
                         <Text style={styles.searchButtonText}>Rechercher un professionnel</Text>
                     </TouchableOpacity>
+
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => {
+                            setModalVisible(false);
+                        }}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <View style={styles.modalHaut}>
+                                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.backButton}>
+                                        <Image source={flecheretourbleu} style={styles.flechemodale} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => deleteImage(selectedImage)} style={styles.backButton}>
+                                        <Image source={poubelle} style={styles.suppmodale} />
+                                    </TouchableOpacity>
+                                </View>
+
+                                <Image source={{ uri: selectedImage }} style={styles.modalImage} />
+
+                            </View>
+                        </View>
+                    </Modal>
 
 
                 </ScrollView>
@@ -117,7 +184,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingHorizontal: width * 0.05,
-        paddingVertical: width * 0.05, 
     },
     contentContainer: {
         flexGrow: 1,
@@ -127,6 +193,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
         marginBottom: width * 0.03,
+        paddingTop: width * 0.05, 
     },
     description: {
         fontSize: 18,
@@ -175,21 +242,21 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+
     imagesContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
+        height: width*0.35, 
+
     },
     image: {
-        width: 50,
-        height: 50,
+        width: width*0.25, // Largeur fixe pour les images
+        height: width*0.35, 
         borderRadius: 10,
+        backgroundColor:'green',
         marginRight: 10,
     },
     addButton: {
-        width: 50,
-        height: 50,
+        marginRight:width*0.5,
         borderRadius: 10,
         borderColor: '#0041C4',
         borderWidth: 1,
@@ -198,8 +265,12 @@ const styles = StyleSheet.create({
     },
     addButtonText: {
         color: '#0041C4',
-        fontSize: 24,
+        fontSize: 14,
+        fontWeight:'bold',
+        marginBottom:10,
     },
+
+
     searchButton: {
         backgroundColor: '#0041C4',
         paddingVertical: width * 0.03,
@@ -210,6 +281,49 @@ const styles = StyleSheet.create({
     searchButtonText: {
         color: '#fff',
         fontSize: 18,
+    },
+
+
+    // Styles pour la modal
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        paddingHorizontal: 20,
+        paddingBottom:20,
+        paddingTop:10,
+        alignItems: 'center',
+        elevation: 5,
+    },
+    modalImage: {
+        width: width * 0.8,
+        height: width * 0.8,
+        borderRadius: 10,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    modalHaut: {
+        width: width * 0.8,
+        flexDirection: 'row',
+        justifyContent: 'space-between', 
+        marginBottom:10,
+        alignItems:'center', 
+    },
+    flechemodale: {
+        width: width * 0.08, 
+        height: width * 0.08,
+    },
+    suppmodale: {
+        width: width * 0.08, 
+        height: width * 0.08,
     },
 });
 

@@ -10,6 +10,8 @@ import SignUp from './src/screen/SignUp/SignUp';
 import MesInformations from './src/screen/Compte/MesInformations/MesInformations';
 import UrgenceType from './src/screen/Urgence/UrgenceType/UrgenceType';
 import UrgenceDetail from './src/screen/Urgence/UrgenceType/UrgenceDetail/UrgenceDetail';
+import ProDispo from './src/screen/Urgence/ProDispo/ProDispo';
+import ProInfo from './src/screen/Urgence/ProInfo/ProInfo';
 
 import NavBar from './src/components/NavBar/NavBar';
 
@@ -29,8 +31,8 @@ export default function App() {
 
         <Stack.Screen name="UrgenceType" component={UrgenceType} />
         <Stack.Screen name="UrgenceDetail" component={UrgenceDetail} />
-
-
+        <Stack.Screen name="ProDispo" component={ProDispo} />
+        <Stack.Screen name="ProInfo" component={ProInfo} />
     
 
       </Stack.Navigator>

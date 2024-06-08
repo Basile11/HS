@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        // paddingHorizontal: '5%',
     },
     contentContainer: {
         flexGrow: 1,
@@ -92,7 +91,6 @@ const styles = StyleSheet.create({
      intervSection: {
         marginTop: 20,
         paddingHorizontal: width * 0.05,
-        // spaceBetween: 300,
     },
     intervName: {
         fontSize: 25,

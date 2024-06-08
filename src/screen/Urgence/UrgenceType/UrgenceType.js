@@ -29,11 +29,6 @@ function UrgenceType({ route, navigation }) {
             <View style={styles.content}>
                 <ScrollView contentContainerStyle={styles.contentContainer}>
                     <Text style={styles.greeting}>Quel est votre problème ?</Text>
-
-                    {/* <ButtonUrgence text="Urgence 1" imageSource={arrow} onPress={() => navigateType('Plombier')} />
-                    <ButtonUrgence text="Urgence 2" imageSource={arrow} onPress={() => navigateType('Plombier')} />
-                    <ButtonUrgence text="Urgence 3" imageSource={arrow} onPress={() => navigateType('Plombier')} />
-                    <ButtonUrgence text="Autre" imageSource={arrow} onPress={() => navigateType('Plombier')} /> */}
                     
                     <ButtonUrgence text="Urgence 1" imageSource={arrow} onPress={() => navigateToDetail('Urgence 1')} />
                     <ButtonUrgence text="Urgence 2" imageSource={arrow} onPress={() => navigateToDetail('Urgence 2')} />
@@ -75,7 +70,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         paddingHorizontal: width * 0.05,
-        paddingVertical: width * 0.05, 
     },
     contentContainer: {
         flexGrow: 1,
@@ -85,6 +79,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#000',
         marginBottom: width * 0.08,
+        paddingTop: width * 0.05, 
     },
 });
 
