@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 function SignUp() {
     const navigation = useNavigation();
@@ -29,11 +30,17 @@ function SignUp() {
         return Object.values(form).every(value => value.trim() !== '');
     };
 
+    const backendurl = 'file:///c:\efrei cour\M1\Semestre 8\Innovation_project\HS_Backend\API.js'
     const handleSignUp = () => {
         if (isFormValid()) {
-            // Handle sign-up logic here
-            console.log('Form Submitted', form);
-            navigation.navigate('SignIn'); // Navigate to the SignIn page
+            axios.post('${backendurl}/signup', form)
+                .then(response => {
+                    console.log('Form Submitted', response.data);
+                    navigation.navigate('SignIn');
+                })
+                .catch(error => {
+                    console.error('There was an error submitting the form!', error);
+                });
         }
     };
 
