@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 
 import flecheretour from '../../../assets/arrow-left-line.png';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import {app, auth, database} from '../../../firebase';
 
 const { width } = Dimensions.get('window');
 
@@ -19,8 +21,23 @@ function SignIn({ navigation }) {
         navigation.navigate('SignUp');
     };
 
-    const handleSignIn = () => {
-        navigation.navigate('NavBar'); // Navigate to NavBar after sign in
+    const isFormValid= () =>{
+        return email && password;
+    };
+
+    const handleSignIn = async () => {
+
+       if (isFormValid()){
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            console.log('User signed in:', user.uid);
+            navigation.navigate('NavBar'); // Navigate to NavBar after sign in
+        }catch (error){
+            console.error('Error signing in: ', error);
+        }
+       };
+        
     };
 
     const handleBack = () => {

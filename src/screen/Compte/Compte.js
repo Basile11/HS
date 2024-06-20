@@ -1,20 +1,68 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
-
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 // import MesInformations from './MesInformations/MesInformations';
 
 import logoverif from '../../../assets/shield-check-fill.png';
 import photoprofil from '../../../assets/account-circle-fill.png';
 
+import SignIn from '../SignIn/SignIn';
+import { getAuth, signOut } from 'firebase/auth';
+import { getDatabase, ref, onValue } from 'firebase/database';
+import {app, auth, database} from '../../../firebase';
+
 const { width } = Dimensions.get('window');
 
 const Compte = () => {
     const navigation = useNavigation();
+    const [userData, setUserData] = useState(null);
+
+    const goToHome = () => {
+        navigation.navigate('Home');
+    };
+
+    const goToSignInPage = () => {
+        navigation.navigate('SignIn');
+    };
+
+    useEffect(() => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user){
+            const database = getDatabase();
+            const userRef = ref(database, 'users/'+user.uid);
+
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+
+                setUserData(data);
+            });
+        }
+    }, []);
+
+    const handleSignOut = () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if(user){
+            signOut(auth)
+            .then(() => {
+                console.log('User signed out successfully.');
+                navigation.navigate('SignIn');
+            })
+        }
+      }
+
+    if (!userData) {
+        return <Text>Loading...</Text>; // ou tout autre indicateur de chargement
+      }
 
     const goToInformationsPage = () => {
         navigation.navigate('MesInformations');
     };
+    
     
     return (
         <View style={styles.container}>
@@ -23,7 +71,7 @@ const Compte = () => {
 
                     <View style={styles.profileSection}>
                         <View style={styles.profileText}>
-                            <Text style={styles.profileName}>Maximilien Dumont</Text>
+                            <Text style={styles.profileName}>{userData.firstName} {userData.lastName} </Text>
                             <Text style={styles.profileTitle}>Plombier - 4.5 ★</Text>
                             <Text style={styles.profileSince}>Depuis 2019 sur HS</Text>
                         </View>
@@ -36,7 +84,7 @@ const Compte = () => {
                             <Text style={styles.sectionTitle}>Identité</Text>
                             <TouchableOpacity style={styles.item} onPress={goToInformationsPage} >
                                 <Text style={styles.itemTitle}>Mes informations</Text>
-                                <Text style={styles.itemSubtitle}>Maximilien DUMONT</Text>
+                                <Text style={styles.itemSubtitle}>{userData.firstName} {userData.lastName}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.item}>
                                 <Text style={styles.itemTitle}>Moyen de paiement</Text>
@@ -49,14 +97,14 @@ const Compte = () => {
                             <TouchableOpacity style={styles.item}>
                                 <Text style={styles.itemTitle}>Téléphone</Text>
                                 <View style={styles.securityContainer}>
-                                    <Text style={styles.itemSubtitle}>06 96 06 34 75</Text>
+                                    <Text style={styles.itemSubtitle}>{userData.phoneNumber}</Text>
                                     <Image source={logoverif} style={styles.logoverifIcon} />
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.item}>
                                 <Text style={styles.itemTitle}>E-mail</Text>
                                 <View style={styles.securityContainer}>
-                                    <Text style={styles.itemSubtitle}>maxdmt@test.com</Text>
+                                    <Text style={styles.itemSubtitle}>{userData.email} </Text>
                                     <Image source={logoverif} style={styles.logoverifIcon}/>
                                 </View>
                             </TouchableOpacity>
@@ -89,6 +137,9 @@ const Compte = () => {
                                 <Text style={styles.itemTitle}>Informations légales</Text>
                             </TouchableOpacity>
                         </View>
+                        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+                        <Text style={styles.buttonText}>Sign Out</Text>
+                    </TouchableOpacity>
                     </ScrollView>
 
                 </View>
@@ -186,6 +237,18 @@ const styles = StyleSheet.create({
     },
     logoverifIcon: {
         marginLeft: 10,
+    },
+    button: {
+        backgroundColor: '#0041C4',
+        padding: 15,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 

@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
+import {ref, set} from 'firebase/database'
+import {app, auth, database} from '../../../firebase';
+
+
 
 import flecheretour from '../../../assets/arrow-left-line.png';
+
 
 const { width } = Dimensions.get('window');
 
@@ -33,11 +39,31 @@ function SignUp() {
         return Object.values(form).every(value => value.trim() !== '');
     };
 
-    const handleSignUp = () => {
+    const handleSignUp = async () => {
         if (isFormValid()) {
             // Handle sign-up logic here
+            try {
+            const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+            const user = userCredential.user;
+
+            await set(ref(database, 'users/' +user.uid),{
+                firstName: form.firstName,
+                lastName: form.lastName,
+                email: form.email,
+                city: form.city,
+                postalCode: form.postalCode,
+                address: form.address,
+                additionalInfo: form.additionalInfo,
+                phoneNumber: form.phoneNumber,
+                isProfessional : false,
+                isParticulier : true
+            });
             console.log('Form Submitted', form);
             navigation.navigate('SignIn'); // Navigate to the SignIn page
+            }catch (error) {
+                console.error('Error registering user: ', error);
+              }
+            
         }
     };
 

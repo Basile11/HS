@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image } from 'react-native';
 
 import flecheretour from '../../../../assets/arrow-left-line.png';
+
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, onValue, update } from 'firebase/database';
+import {app, auth, database} from '../../../../firebase';
 
 const { width } = Dimensions.get('window');
 
@@ -10,6 +14,51 @@ const MesInformations = ({ navigation }) => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
     };
     
+
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user){
+            const database = getDatabase();
+            const userRef = ref(database, 'users/'+user.uid);
+
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+
+                setUserData(data);
+            });
+        }
+    }, []);
+
+    const handleInputChange = (name, value) => {
+        setUserData({ ...userData, [name]: value});
+    };
+
+    const handleSave = () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+            const database = getDatabase();
+            const userRef = ref(database, 'users/' +user.uid);
+
+            update(userRef, userData)
+            .then(() => {
+                console.log('Data updated successfully');
+                navigation.goBack();
+            })
+        }
+    }
+
+    if (!userData) {
+        return <Text>Loading...</Text>; // ou tout autre indicateur de chargement
+      }
+
+
     return (
         <View style={styles.container}>
 
@@ -24,37 +73,37 @@ const MesInformations = ({ navigation }) => {
                 <ScrollView contentContainerStyle={styles.contentContainer}>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Prénom </Text>
-                        <TextInput style={styles.input} defaultValue ="Basile"  />
+                        <TextInput style={styles.input} defaultValue ={userData.firstName} onChangeText={(value) => handleInputChange('firstName', value)} />
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Nom </Text>
-                        <TextInput style={styles.input} defaultValue ="Truquin"  />
+                        <TextInput style={styles.input} defaultValue ={userData.lastName} onChangeText={(value) => handleInputChange('lastName', value)} />
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Adresse mail </Text>
-                        <TextInput style={styles.input} defaultValue ="adresse.mail@gmail.com" />
+                        <TextInput style={styles.input} defaultValue ={userData.email} />
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Ville </Text>
-                        <TextInput style={styles.input} defaultValue ="Vincennes" />
+                        <TextInput style={styles.input} defaultValue ={userData.city} onChangeText={(value) => handleInputChange('city', value)} />
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Code postal </Text>
-                        <TextInput style={styles.input} defaultValue ="94190" />
+                        <TextInput style={styles.input} defaultValue ={userData.postalCode} onChangeText={(value) => handleInputChange('postalCode', value)}/>
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Adresse </Text>
-                        <TextInput style={styles.input} defaultValue ="12 Avenue de la République" />
+                        <TextInput style={styles.input} defaultValue ={userData.address} onChangeText={(value) => handleInputChange('address', value)}/>
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Information complémentaire</Text>
-                        <TextInput style={styles.input} defaultValue ="1er étage à gauche" />
+                        <TextInput style={styles.input} defaultValue ={userData.additionalInfo} onChangeText={(value) => handleInputChange('additionalInfo', value)}/>
                     </View>
                     <View style={styles.formGroup}>
                         <Text style={styles.label}>Numéro de téléphone </Text>
-                        <TextInput style={styles.input} defaultValue ="0612345678"  />
+                        <TextInput style={styles.input} defaultValue ={userData.phoneNumber} onChangeText={(value) => handleInputChange('phoneNumber', value)} />
                     </View>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
                         <Text style={styles.buttonText}>Enregistrer</Text>
                     </TouchableOpacity>
                 </ScrollView>

@@ -19,6 +19,8 @@ import NavBar from './src/components/NavBar/NavBar';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+
+
 export default function App() {
   return (
     <NavigationContainer>
