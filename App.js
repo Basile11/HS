@@ -15,6 +15,7 @@ import ProInfo from './src/screen/Urgence/ProInfo/ProInfo';
 import UrgenceFinal from './src/screen/Urgence/UrgenceFinal/UrgenceFinal';
 
 import NavBar from './src/components/NavBar/NavBar';
+import NavBarPro from './src/components/NavBar/NavBarPro';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -30,6 +31,7 @@ export default function App() {
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} screenOptions={{ headerShown: false }}/>
         <Stack.Screen name="NavBar" component={NavBar} />
+        <Stack.Screen name="NavBarPro" component={NavBarPro} />
         <Stack.Screen name="MesInformations" component={MesInformations} />
 
         <Stack.Screen name="UrgenceType" component={UrgenceType} />

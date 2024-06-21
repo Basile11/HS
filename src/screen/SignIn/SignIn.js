@@ -25,19 +25,38 @@ function SignIn({ navigation }) {
         return email && password;
     };
 
-    const handleSignIn = async () => {
+    // const handleSignIn = async () => {
 
-       if (isFormValid()){
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            console.log('User signed in:', user.uid);
-            navigation.navigate('NavBar'); // Navigate to NavBar after sign in
-        }catch (error){
-            console.error('Error signing in: ', error);
-        }
-       };
+    //    if (isFormValid()){
+    //     try {
+    //         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    //         const user = userCredential.user;
+    //         console.log('User signed in:', user.uid);
+    //         navigation.navigate('NavBar'); // Navigate to NavBar after sign in
+    //     }catch (error){
+    //         console.error('Error signing in: ', error);
+    //     }
+    //    };
         
+    // };
+
+    const handleSignIn = async () => {
+        if (isFormValid()) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log('User signed in:', user.uid);
+
+                // Vérifiez le type d'utilisateur après la connexion et naviguez en conséquence
+                if (isProfessional) {
+                    navigation.navigate('NavBarPro'); // Navigate to NavBarPro for professionals
+                } else {
+                    navigation.navigate('NavBar'); // Navigate to NavBar for particuliers
+                }
+            } catch (error) {
+                console.error('Error signing in: ', error);
+            }
+        }
     };
 
     const handleBack = () => {
