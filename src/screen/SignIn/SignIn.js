@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 
 import flecheretour from '../../../assets/arrow-left-line.png';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, getAuth } from 'firebase/auth';
 import {app, auth, database} from '../../../firebase';
 
 const { width } = Dimensions.get('window');
@@ -12,6 +12,19 @@ function SignIn({ navigation }) {
     const [password, setPassword] = useState('');
     const [isProfessional, setIsProfessional] = useState(false);
     const [isParticulier, setIsParticulier] = useState(true);
+
+    const handlePasswordReset = () => {
+        const auth = getAuth();
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                Alert.alert('Email envoyé', 'Un email de réinitialisation du mot de passe a été envoyé à votre adresse.');
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                Alert.alert('Erreur', errorMessage);
+            });
+    };
 
     const goToHome = () => {
         navigation.navigate('Home');
@@ -92,7 +105,7 @@ function SignIn({ navigation }) {
                             onChangeText={setPassword}
                             secureTextEntry={true}
                         />
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={handlePasswordReset}>
                             <Text style={styles.forgotPasswordText}>Mot de passe oublié ?</Text>
                         </TouchableOpacity>
                     </View>

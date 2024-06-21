@@ -13,12 +13,14 @@ import {app, auth, database} from '../../../firebase';
 
 const { width } = Dimensions.get('window');
 
-const Compte = () => {
-    const navigation = useNavigation();
+// const Compte = () => {
+function Compte({ navigation }) {
+
+    // const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
 
     const goToHome = () => {
-        navigation.navigate('Home');
+        navigation.navigate('Interventions');
     };
 
     const goToSignInPage = () => {
@@ -50,7 +52,9 @@ const Compte = () => {
             signOut(auth)
             .then(() => {
                 console.log('User signed out successfully.');
-                navigation.navigate('SignIn');
+                // navigation.navigate('SignIn');
+                navigation.navigate('Home');
+
             })
         }
       }
@@ -138,8 +142,12 @@ const Compte = () => {
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-                        <Text style={styles.buttonText}>Sign Out</Text>
-                    </TouchableOpacity>
+                            <Text style={styles.buttonText}>Sign Out</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.button} onPress={goToHome}>
+                            <Text style={styles.buttonText}>Maison</Text>
+                        </TouchableOpacity>
                     </ScrollView>
 
                 </View>
