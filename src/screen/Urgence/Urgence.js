@@ -12,11 +12,11 @@ import bug from '../../../assets/urgence/bug-line.png';
 const { width } = Dimensions.get('window');
 
 function Urgence({ navigation }) {
-    React.useEffect(() => {
-        navigation.addListener('beforeRemove', (e) => {
-            e.preventDefault(); // Prevent default behavior of going back
-        });
-    }, [navigation]);
+    // React.useEffect(() => {
+    //     navigation.addListener('beforeRemove', (e) => {
+    //         e.preventDefault(); // Prevent default behavior of going back
+    //     });
+    // }, [navigation]);
 
     const navigateType = (service) => {
         navigation.navigate('UrgenceType', { service });
