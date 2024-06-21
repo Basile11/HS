@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions
 
 import { useNavigation } from '@react-navigation/native';
 
-import logoverif from '../../../assets/shield-check-fill.png';
-import photoprofil from '../../../assets/account-circle-fill.png';
+import logoverif from '../../../../assets/shield-check-fill.png';
+import photoprofil from '../../../../assets/account-circle-fill.png';
 
 const { width } = Dimensions.get('window');
 

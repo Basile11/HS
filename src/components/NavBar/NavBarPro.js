@@ -46,8 +46,8 @@ const BottomTabBar = () => {
         }}
       /> */}
       <Tab.Screen
-        name="Interventions"
-        component={Interventions}
+        name="InterventionPro"
+        component={InterventionPro}
         options={{
           tabBarIcon: InterventionsIcon,
         }}
