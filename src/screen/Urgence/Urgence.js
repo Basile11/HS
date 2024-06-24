@@ -18,8 +18,20 @@ function Urgence({ navigation }) {
     //     });
     // }, [navigation]);
 
-    const navigateType = (service) => {
-        navigation.navigate('UrgenceType', { service });
+    const navPlombier = () => {
+        navigation.navigate('UrgenceTypePlomb');
+    };
+    const navElec = () => {
+        navigation.navigate('UrgenceTypeElec');
+    };
+    const navChauf = () => {
+        navigation.navigate('UrgenceTypeChauf');
+    };
+    const navDerat = () => {
+        navigation.navigate('UrgenceTypeDerat');
+    };
+    const navSerr = () => {
+        navigation.navigate('UrgenceTypeSerr');
     };
 
     return (
@@ -32,11 +44,11 @@ function Urgence({ navigation }) {
                     <Text style={styles.greeting}>Besoin d'aide ?</Text>
                     <Text style={styles.instructions}>Sélectionnez le domaine pour lequel vous avez besoin d'un professionnel.</Text>
                     <View>
-                        <ButtonUrgence text="Plombier" imageSource={water} onPress={() => navigateType('Plombier')} />
-                        <ButtonUrgence text="Serrurier" imageSource={key} onPress={() => navigateType('Serrurier')} />
-                        <ButtonUrgence text="Electricien" imageSource={elec} onPress={() => navigateType('Electricien')} />
-                        <ButtonUrgence text="Chauffagiste" imageSource={temp} onPress={() => navigateType('Chauffagiste')} />
-                        <ButtonUrgence text="Dératiseur" imageSource={bug} onPress={() => navigateType('Dératiseur')} />
+                        <ButtonUrgence text="Plombier" imageSource={water} onPress={navPlombier} />
+                        <ButtonUrgence text="Serrurier" imageSource={key} onPress={navSerr} />
+                        <ButtonUrgence text="Electricien" imageSource={elec} onPress={navElec} />
+                        <ButtonUrgence text="Chauffagiste" imageSource={temp} onPress={navChauf} />
+                        <ButtonUrgence text="Dératiseur" imageSource={bug} onPress={navDerat} />
 
                     </View>                    
                 </ScrollView>

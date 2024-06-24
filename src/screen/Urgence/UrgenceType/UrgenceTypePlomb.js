@@ -8,14 +8,16 @@ import flecheretour from '../../../../assets/arrow-left-line.png'
 const { width } = Dimensions.get('window');
 
 function UrgenceType({ route, navigation }) {
-    const { service } = route.params;
+
     
     const handleBack = () => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
     };
     
+    const service = 'plombier';
     const navigateToDetail = (emergency) => {
-        navigation.navigate('UrgenceDetail', { service, emergency });
+        navigation.navigate('UrgenceDetail', { emergency , service});
+        console.log('Service:',service);
     };
 
     return (
@@ -24,16 +26,19 @@ function UrgenceType({ route, navigation }) {
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Image source={flecheretour} style={styles.flechestyle} />
                 </TouchableOpacity>
-                <Text style={styles.header}>{service}</Text>
+                <Text style={styles.header}>Plombier</Text>
             </View>
             <View style={styles.content}>
                 <ScrollView contentContainerStyle={styles.contentContainer}>
                     <Text style={styles.greeting}>Quel est votre problème ?</Text>
                     
-                    <ButtonUrgence text="Urgence 1" imageSource={arrow} onPress={() => navigateToDetail('Urgence 1')} />
-                    <ButtonUrgence text="Urgence 2" imageSource={arrow} onPress={() => navigateToDetail('Urgence 2')} />
-                    <ButtonUrgence text="Urgence 3" imageSource={arrow} onPress={() => navigateToDetail('Urgence 3')} />
-                    <ButtonUrgence text="Autre" imageSource={arrow} onPress={() => navigateToDetail('Autre')} />
+                    <ButtonUrgence text="Réparation de fuite d’eau" imageSource={arrow} onPress={() => navigateToDetail("Réparation de fuite d’eau")} />
+                    <ButtonUrgence text="Changer robinet" imageSource={arrow} onPress={() => navigateToDetail('Changer robinet')} />
+                    <ButtonUrgence text="Changer chasse d’eau" imageSource={arrow} onPress={() => navigateToDetail("Changer chasse d’eau")} />
+                    <ButtonUrgence text="Déboucher robinet" imageSource={arrow} onPress={() => navigateToDetail('Déboucher robinet')} />
+                    <ButtonUrgence text="Déboucher WC" imageSource={arrow} onPress={() => navigateToDetail('Déboucher WC')} />
+                    <ButtonUrgence text="Déboucher canalisation" imageSource={arrow} onPress={() => navigateToDetail('Déboucher canalisation')} />
+                    <ButtonUrgence text="Autres problèmes" imageSource={arrow} onPress={() => navigateToDetail('Autres problèmes')} />
 
                 </ScrollView>
             </View>

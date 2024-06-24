@@ -8,7 +8,11 @@ import SignIn from './src/screen/SignIn/SignIn';
 import SignUp from './src/screen/SignUp/SignUp';
 
 import MesInformations from './src/screen/Compte/MesInformations/MesInformations';
-import UrgenceType from './src/screen/Urgence/UrgenceType/UrgenceType';
+import UrgenceTypeSerr from './src/screen/Urgence/UrgenceType/UrgenceTypeSerr';
+import UrgenceTypeDerat from './src/screen/Urgence/UrgenceType/UrgenceTypeDerat';
+import UrgenceTypePlomb from './src/screen/Urgence/UrgenceType/UrgenceTypePlomb';
+import UrgenceTypeChauf from './src/screen/Urgence/UrgenceType/UrgenceTypeChauf';
+import UrgenceTypeElec from './src/screen/Urgence/UrgenceType/UrgenceTypeElec';
 import UrgenceDetail from './src/screen/Urgence/UrgenceType/UrgenceDetail/UrgenceDetail';
 import ProDispo from './src/screen/Urgence/ProDispo/ProDispo';
 import ProInfo from './src/screen/Urgence/ProInfo/ProInfo';
@@ -34,7 +38,11 @@ export default function App() {
         <Stack.Screen name="NavBarPro" component={NavBarPro} />
         <Stack.Screen name="MesInformations" component={MesInformations} />
 
-        <Stack.Screen name="UrgenceType" component={UrgenceType} />
+        <Stack.Screen name="UrgenceTypeChauf" component={UrgenceTypeChauf} />
+        <Stack.Screen name="UrgenceTypePlomb" component={UrgenceTypePlomb} />
+        <Stack.Screen name="UrgenceTypeElec" component={UrgenceTypeElec} />
+        <Stack.Screen name="UrgenceTypeDerat" component={UrgenceTypeDerat} />
+        <Stack.Screen name="UrgenceTypeSerr" component={UrgenceTypeSerr} />
         <Stack.Screen name="UrgenceDetail" component={UrgenceDetail} />
         <Stack.Screen name="ProDispo" component={ProDispo} />
         <Stack.Screen name="ProInfo" component={ProInfo} />

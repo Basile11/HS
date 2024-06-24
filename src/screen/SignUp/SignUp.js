@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
 import {ref, set} from 'firebase/database'
 import {app, auth, database} from '../../../firebase';
+import { Picker } from '@react-native-picker/picker';
+
 
 
 
@@ -15,6 +17,12 @@ const { width } = Dimensions.get('window');
 function SignUp() {
     const navigation = useNavigation();
 
+    const [selectedJob, setSelectedJob] = useState('');
+    const [showJobPicker, setShowJobPicker] = useState(false);
+
+
+    const [valeur, setValeur] = useState(0);
+
     const [form, setForm] = useState({
         firstName: '',
         lastName: '',
@@ -25,7 +33,8 @@ function SignUp() {
         postalCode: '',
         address: '',
         additionalInfo: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        job: ''
     });
 
     const [isProfessional, setIsProfessional] = useState(false);
@@ -36,10 +45,17 @@ function SignUp() {
     };
 
     const isFormValid = () => {
+        const commonFieldsValid = Object.keys(form).filter(key => key !== 'job').every(key => form[key] && form[key].trim() !== '');
+
+    if (isProfessional) {
+        return commonFieldsValid && selectedJob.trim() !== '';
+    }
+
+    return commonFieldsValid;
         return Object.values(form).every(value => value.trim() !== '');
     };
 
-    const handleSignUp = async () => {
+    const handleSignUpPart = async () => {
         if (isFormValid()) {
             // Handle sign-up logic here
             try {
@@ -55,8 +71,38 @@ function SignUp() {
                 address: form.address,
                 additionalInfo: form.additionalInfo,
                 phoneNumber: form.phoneNumber,
+                job:'',
                 isProfessional : false,
                 isParticulier : true
+            });
+            console.log('Form Submitted', form);
+            navigation.navigate('SignIn'); // Navigate to the SignIn page
+            }catch (error) {
+                console.error('Error registering user: ', error);
+              }
+            
+        }
+    };
+
+    const handleSignUpPro = async () => {
+        if (isFormValid()) {
+            // Handle sign-up logic here
+            try {
+            const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+            const user = userCredential.user;
+
+            await set(ref(database, 'professionnel/' +user.uid),{
+                firstName: form.firstName,
+                lastName: form.lastName,
+                email: form.email,
+                city: form.city,
+                postalCode: form.postalCode,
+                address: form.address,
+                additionalInfo: form.additionalInfo,
+                phoneNumber: form.phoneNumber,
+                job : selectedJob,
+                isProfessional : true,
+                isParticulier : false
             });
             console.log('Form Submitted', form);
             navigation.navigate('SignIn'); // Navigate to the SignIn page
@@ -90,13 +136,24 @@ function SignUp() {
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
                                 style={[styles.choiceButton, isParticulier ? styles.selectedButton : styles.unselectedButton]}
-                                onPress={() => { setIsProfessional(false); setIsParticulier(true); }}>
+                                onPress={() => {
+                                    setIsProfessional(false);
+                                    setIsParticulier(true);
+                                    setValeur(0);
+                                    setShowJobPicker(false);
+                                    setForm({ ...form, job: null }); // Reset job field for Particulier
+                                }}>
                                 <Text style={[styles.choiceButtonText, isParticulier ? styles.selectedButtonText : styles.unselectedButtonText]}>Particulier</Text>
                             </TouchableOpacity>
                             <View style={{ width: 10 }} />
                             <TouchableOpacity
                                 style={[styles.choiceButton, isProfessional ? styles.selectedButton : styles.unselectedButton]}
-                                onPress={() => { setIsProfessional(true); setIsParticulier(false); }}>
+                                onPress={() => {
+                                    setIsProfessional(true);
+                                    setIsParticulier(false);
+                                    setValeur(1);
+                                    setShowJobPicker(true);
+                                }}>
                                 <Text style={[styles.choiceButtonText, isProfessional ? styles.selectedButtonText : styles.unselectedButtonText]}>Professionnel</Text>
                             </TouchableOpacity>
                         </View>
@@ -168,11 +225,30 @@ function SignUp() {
                             onChangeText={(value) => handleInputChange('phoneNumber', value)}
                             keyboardType="phone-pad"
                         />
+                        {isProfessional && (
+                            <View style={styles.jobPickerContainer}>
+                                <TouchableOpacity
+                                    style={styles.openPickerButton}
+                                    onPress={() => setShowJobPicker(true)}
+                                >
+                                    <Text style={styles.openPickerButtonText}>Sélectionnez un métier</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.selectedJobText}>{selectedJob ? `Métier sélectionné : ${selectedJob}` : "Aucun métier sélectionné"}</Text>
+                            </View>
+                        )}
                     </View>
 
                     <TouchableOpacity
                         style={[styles.submitButton, !isFormValid() && styles.submitButtonDisabled]}
-                        onPress={handleSignUp}
+                        onPress={() => {
+                            if (valeur === 0) {
+                                handleSignUpPart();
+                                console.log("handleSignUpPart() called");
+                            } else if (valeur === 1) {
+                                handleSignUpPro();
+                                console.log("handleSignUpPro() called");
+                            }
+                        }}
                         disabled={!isFormValid()}
                     >
                         <Text style={styles.submitButtonText}>S'inscrire</Text>
@@ -183,6 +259,40 @@ function SignUp() {
                     </TouchableOpacity>
                 </ScrollView>
             </View>
+
+            <Modal
+    visible={showJobPicker}
+    transparent={true}
+    animationType="slide"
+>
+    <TouchableWithoutFeedback onPress={() => setShowJobPicker(false)}>
+        <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Sélectionnez votre métier</Text>
+                    <Picker
+                        selectedValue={selectedJob}
+                        onValueChange={(itemValue) => setSelectedJob(itemValue)}
+                        style={styles.picker}
+                    >
+                        <Picker.Item label="Sélectionnez un métier" value="" />
+                        <Picker.Item label="Électricien" value="electricien" />
+                        <Picker.Item label="Chauffagiste" value="chauffagiste" />
+                        <Picker.Item label="Plombier" value="plombier" />
+                        <Picker.Item label="Dératiseur" value="deratiseur" />
+                        <Picker.Item label="Serrurier" value="serrurier" />
+                    </Picker>
+                    <TouchableOpacity
+                        style={styles.closeModalButton}
+                        onPress={() => setShowJobPicker(false)}
+                    >
+                        <Text style={styles.closeModalButtonText}>Valider</Text>
+                    </TouchableOpacity>
+                </View>
+            </TouchableWithoutFeedback>
+        </View>
+    </TouchableWithoutFeedback>
+</Modal>
         </View>
     );
 }
@@ -299,6 +409,60 @@ const styles = StyleSheet.create({
     helpText: {
         color: '#0041C4',
         textAlign: 'center',
+    },
+
+    jobPickerContainer: {
+        marginTop: 20,
+        marginBottom: 20,
+        alignItems: 'center',
+    },
+    openPickerButton: {
+        backgroundColor: '#0041C4',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+    },
+    openPickerButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    selectedJobText: {
+        marginTop: 10,
+        fontSize: 16,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    closeModalButton: {
+        backgroundColor: '#0041C4',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    closeModalButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
+    picker: {
+        width: '100%',
+        height: 200,
+        color: '#0041C4',
     },
 });
 

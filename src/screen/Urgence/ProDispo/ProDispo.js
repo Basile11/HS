@@ -1,27 +1,52 @@
-import React from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, Image } from 'react-native';
+import { ref, query, orderByChild, equalTo, onValue, getDatabase } from 'firebase/database';
+import { database } from '../../../../firebase'; // Assurez-vous que le chemin est correct
 
 import ProButton from '../../../components/ProButton/ProButton';
-
-import ButtonUrgence from '../../../components/ButtonUrgence/ButtonUrgence';
-import arrow from '../../../../assets/arrow-right-s-line.png';
-import flecheretour from '../../../../assets/arrow-left-line.png'
+import flecheretour from '../../../../assets/arrow-left-line.png';
 
 const { width } = Dimensions.get('window');
 
 function ProDispo({ route, navigation }) {
     const { service, problemDescription, estimatedTime, images, emergency } = route.params;
 
+    const [professionals, setProfessionals] = useState([]);
+
     const handleBack = () => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
     };
 
-    const professionals = [
-        { name: 'Maximilien Dumont', location: 'Brunoy', rating: '4,5', time: '20 min', price: '~30 €' },
-        { name: 'Maximilien Dumont', location: 'Lieusaint', rating: '4,6', time: '50 min', price: '~50 €' },
-        { name: 'Maximilien Dumont', location: 'Montreuil', rating: '4,3', time: '40 min', price: '~70 €' },
-        { name: 'Maximilien Dumont', location: 'Vincennes', rating: '4,7', time: '25 min', price: '~60 €' },
-    ];
+    useEffect(() => {
+        const db = getDatabase();
+        const professionalsRef = query(ref(db, 'professionnel'), orderByChild('job'), equalTo(service));
+        
+        console.log("Fetching professionals for service:", service);
+        
+        onValue(professionalsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const filteredProfessionals = Object.values(data);
+                setProfessionals(filteredProfessionals);
+                console.log("Filtered professionals:", filteredProfessionals);
+            } else {
+                console.log("No data found for the given service:", service);
+            }
+        }, (error) => {
+            console.error("Error fetching data:", error);
+        });
+    }, [service]);
+
+    const renderItem = ({ item }) => (
+        <ProButton
+            name={`${item.firstName} ${item.lastName}`}
+            location={item.city}
+            rating={item.rating || 'N/A'}
+            time={item.time || 'N/A'}
+            price={item.price || 'N/A'}
+            onPress={() => navigation.navigate('ProInfo', { pro: item, service, problemDescription, estimatedTime, images, emergency })}
+        />
+    );
 
     return (
         <View style={styles.container}>
@@ -32,27 +57,15 @@ function ProDispo({ route, navigation }) {
                 <Text style={styles.header}>{service}</Text>
             </View>
             <View style={styles.content}>
-                <ScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text style={styles.greeting}>Disponibles à proximité</Text>
-                    <Text style={styles.instructions}>Choisissez un ouvrier pour accéder à sa fiche complète.</Text>
-
-                    {professionals.map((pro, index) => (
-                        <View key={index}>
-                            <ProButton
-                                name={pro.name}
-                                location={pro.location}
-                                rating={pro.rating}
-                                time={pro.time}
-                                price={pro.price}
-                                onPress={() => navigation.navigate('ProInfo', { pro, service, problemDescription, estimatedTime, images, emergency })}
-                            />
-                            {index < professionals.length - 1 && <View style={styles.separator} />}
-                        </View>
-                    ))}
-
-
-
-                </ScrollView>
+                <Text style={styles.greeting}>Disponibles à proximité</Text>
+                <Text style={styles.instructions}>Choisissez un ouvrier pour accéder à sa fiche complète.</Text>
+                <FlatList
+                    data={professionals}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    contentContainerStyle={styles.contentContainer}
+                />
             </View>
         </View>
     );
@@ -80,7 +93,6 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginLeft: 10,
     },
-
     content: {
         flex: 1,
         backgroundColor: '#fff',
@@ -107,7 +119,6 @@ const styles = StyleSheet.create({
     separator: {
         height: 1,
         backgroundColor: '#E0E0E0',
-        // marginVertical: 10,
     },
 });
 
