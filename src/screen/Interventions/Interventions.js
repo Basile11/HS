@@ -48,6 +48,10 @@ const Interventions = () => {
         }
     }, [userId]);
 
+    const handlePress = (intervention) => {
+        navigation.navigate('InterventionDetail', { intervention });
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Interventions</Text>
@@ -56,7 +60,7 @@ const Interventions = () => {
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Intervention en cours</Text>
                         {currentInterventions.length > 0 ? currentInterventions.map((intervention) => (
-                            <TouchableOpacity key={intervention.id} style={styles.intervItem}>
+                            <TouchableOpacity key={intervention.id} style={styles.intervItem} onPress={() => handlePress(intervention)}>
                                 <View style={styles.intervItemContent}>
                                     <View>
                                         <Text style={styles.intervItemTitle}>{intervention.title}</Text>
@@ -73,7 +77,7 @@ const Interventions = () => {
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Interventions passées</Text>
                         {pastInterventions.length > 0 ? pastInterventions.map((intervention) => (
-                            <TouchableOpacity key={intervention.id} style={styles.passeItem}>
+                            <TouchableOpacity key={intervention.id} style={styles.passeItem} onPress={() => handlePress(intervention)}>
                                 <View style={styles.passeItemContent}>
                                     <View>
                                         <Text style={styles.passeItemTitle}>{intervention.title}</Text>
