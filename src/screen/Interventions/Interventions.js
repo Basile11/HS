@@ -11,6 +11,10 @@ const { width } = Dimensions.get('window');
 const Interventions = () => {
     const navigation = useNavigation();
     
+    const handleEvaluatePress = () => {
+        navigation.navigate('InterventionEval');
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Interventions</Text>
@@ -38,9 +42,12 @@ const Interventions = () => {
                                         <Text style={styles.passeItemTitle}>Plombier</Text>
                                         <Text style={styles.passeItemSubtitle}>Changement de robinet</Text>
                                     </View>
-                                    <View style={styles.passeItemEvaluerContainer}>
+                                    {/* <View style={styles.passeItemEvaluerContainer}>
                                         <Text style={styles.passeItemEvaluer}>Evaluer</Text>
-                                    </View>
+                                    </View> */}
+                                    <TouchableOpacity onPress={handleEvaluatePress}>
+                                        <Text style={styles.passeItemEvaluer}>Évaluer</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
 

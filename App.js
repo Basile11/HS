@@ -15,6 +15,7 @@ import ProInfo from './src/screen/Urgence/ProInfo/ProInfo';
 import UrgenceFinal from './src/screen/Urgence/UrgenceFinal/UrgenceFinal';
 import DetailInterventionPro from './src/screen/Interventions/InterventionPro/DetailInterventionPro';
 import TerminerInter from './src/screen/Interventions/InterventionPro/TerminerInter';
+import InterventionEval from './src/screen/Interventions/InterventionEval';
 
 import NavBar from './src/components/NavBar/NavBar';
 import NavBarPro from './src/components/NavBar/NavBarPro';
@@ -43,6 +44,7 @@ export default function App() {
         <Stack.Screen name="UrgenceFinal" component={UrgenceFinal} />
         <Stack.Screen name="DetailInterventionPro" component={DetailInterventionPro} />
         <Stack.Screen name="TerminerInter" component={TerminerInter} />
+        <Stack.Screen name="InterventionEval" component={InterventionEval} />
     
 
       </Stack.Navigator>
