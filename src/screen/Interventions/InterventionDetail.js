@@ -23,31 +23,56 @@ const InterventionDetail = () => {
             <style>
                 body {
                     font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    color: #333;
+                }
+                .container {
+                    width: 100%;
                     padding: 20px;
+                    box-sizing: border-box;
                 }
                 .header {
                     text-align: center;
-                    margin-bottom: 40px;
+                    margin-bottom: 20px;
                 }
                 .header h1 {
                     margin: 0;
+                    font-size: 24px;
                 }
                 .header p {
                     margin: 0;
+                    font-size: 14px;
                 }
                 .details {
+                    display: flex;
+                    justify-content: space-between;
                     margin-bottom: 20px;
+                }
+                .details div {
+                    width: 48%;
                 }
                 .details p {
                     margin: 5px 0;
+                    font-size: 14px;
+                }
+                .invoice-details {
+                    margin-bottom: 20px;
+                }
+                .invoice-details h2 {
+                    margin: 0 0 10px 0;
+                    font-size: 18px;
                 }
                 .items table {
                     width: 100%;
                     border-collapse: collapse;
+                    margin-bottom: 20px;
                 }
                 .items th, .items td {
                     border: 1px solid #ddd;
                     padding: 8px;
+                    text-align: left;
+                    font-size: 14px;
                 }
                 .items th {
                     background-color: #f2f2f2;
@@ -63,34 +88,49 @@ const InterventionDetail = () => {
             </style>
         </head>
         <body>
-            <div class="header">
-                <h1>Facture</h1>
-                <p>Date: ${intervention.date}</p>
-            </div>
-            <div class="details">
-                <p>Nom du client: John Doe</p>
-                <p>Adresse: 123 Main Street, City</p>
-            </div>
-            <div class="items">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th>Durée</th>
-                            <th>Prix</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${intervention.title} - ${intervention.subtitle}</td>
-                            <td>${intervention.duration}</td>
-                            <td>${intervention.price} €</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="total">
-                <p>Total: ${intervention.price} €</p>
+            <div class="container">
+                <div class="header">
+                    <h1>Facture</h1>
+                    <p>Date: ${intervention.date}</p>
+                </div>
+                <div class="details">
+                    <div class="hs-details">
+                        <p>HS</p>
+                        <p>Adresse de HS</p>
+                        <p>Ville, Code Postal</p>
+                        <p>Email de HS</p>
+                        <p>Téléphone de HS</p>
+                    </div>
+                    <div class="client-details">
+                        <p>Nom du client: John Doe</p>
+                        <p>Adresse: 123 Main Street, City</p>
+                    </div>
+                </div>
+                <div class="invoice-details">
+                    <h2>Détails de l'intervention</h2>
+                    <p>${intervention.title} - ${intervention.subtitle}</p>
+                </div>
+                <div class="items">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Durée</th>
+                                <th>Prix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${intervention.title} - ${intervention.subtitle}</td>
+                                <td>${intervention.duration}</td>
+                                <td>${intervention.price} €</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="total">
+                    <p>Total: ${intervention.price} €</p>
+                </div>
             </div>
         </body>
         </html>
@@ -117,7 +157,12 @@ const InterventionDetail = () => {
     if (pdfUri) {
         return (
             <View style={{ flex: 1 }}>
-                <View style={styles.pdfHeader}>
+                <WebView
+                    style={{ flex: 1, marginTop: 40 }} // Marge en haut
+                    originWhitelist={['*']}
+                    source={{ uri: pdfUri }}
+                />
+                <View style={styles.pdfFooter}>
                     <TouchableOpacity onPress={() => setPdfUri(null)} style={styles.pdfButton}>
                         <Text style={styles.pdfButtonText}>Retour</Text>
                     </TouchableOpacity>
@@ -128,11 +173,6 @@ const InterventionDetail = () => {
                         <Text style={styles.pdfButtonText}>Imprimer</Text>
                     </TouchableOpacity>
                 </View>
-                <WebView
-                    style={{ flex: 1 }}
-                    originWhitelist={['*']}
-                    source={{ uri: pdfUri }}
-                />
             </View>
         );
     }
@@ -243,12 +283,13 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
-    pdfHeader: {
+    pdfFooter: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'center',
         backgroundColor: '#f2f2f2',
         padding: 10,
+        marginBottom: 20, // Ajout de marge en bas
     },
     pdfButton: {
         backgroundColor: '#0041C4',
