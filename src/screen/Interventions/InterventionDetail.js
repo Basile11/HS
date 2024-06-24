@@ -1,12 +1,141 @@
 // src/components/InterventionDetail.js
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import * as Print from 'expo-print';
+import * as FileSystem from 'expo-file-system';
+import { WebView } from 'react-native-webview';
+import * as Sharing from 'expo-sharing';
 
 const InterventionDetail = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { intervention } = route.params;
+    const [pdfUri, setPdfUri] = useState(null);
+
+    const createAndShowPDF = async () => {
+        const template = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Facture</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 40px;
+                }
+                .header h1 {
+                    margin: 0;
+                }
+                .header p {
+                    margin: 0;
+                }
+                .details {
+                    margin-bottom: 20px;
+                }
+                .details p {
+                    margin: 5px 0;
+                }
+                .items table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .items th, .items td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                }
+                .items th {
+                    background-color: #f2f2f2;
+                }
+                .total {
+                    text-align: right;
+                    margin-top: 20px;
+                }
+                .total p {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Facture</h1>
+                <p>Date: ${intervention.date}</p>
+            </div>
+            <div class="details">
+                <p>Nom du client: John Doe</p>
+                <p>Adresse: 123 Main Street, City</p>
+            </div>
+            <div class="items">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Durée</th>
+                            <th>Prix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${intervention.title} - ${intervention.subtitle}</td>
+                            <td>${intervention.duration}</td>
+                            <td>${intervention.price} €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="total">
+                <p>Total: ${intervention.price} €</p>
+            </div>
+        </body>
+        </html>
+        `;
+
+        try {
+            const { uri } = await Print.printToFileAsync({ html: template });
+            const pdfUri = await FileSystem.getContentUriAsync(uri);
+            setPdfUri(pdfUri);
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Erreur', 'Une erreur est survenue lors de la génération du PDF');
+        }
+    };
+
+    const sharePDF = async () => {
+        if (pdfUri) {
+            await Sharing.shareAsync(pdfUri);
+        } else {
+            Alert.alert('Erreur', 'Aucun PDF à partager');
+        }
+    };
+
+    if (pdfUri) {
+        return (
+            <View style={{ flex: 1 }}>
+                <View style={styles.pdfHeader}>
+                    <TouchableOpacity onPress={() => setPdfUri(null)} style={styles.pdfButton}>
+                        <Text style={styles.pdfButtonText}>Retour</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={sharePDF} style={styles.pdfButton}>
+                        <Text style={styles.pdfButtonText}>Partager</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => Print.printAsync({ uri: pdfUri })} style={styles.pdfButton}>
+                        <Text style={styles.pdfButtonText}>Imprimer</Text>
+                    </TouchableOpacity>
+                </View>
+                <WebView
+                    style={{ flex: 1 }}
+                    originWhitelist={['*']}
+                    source={{ uri: pdfUri }}
+                />
+            </View>
+        );
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -24,7 +153,7 @@ const InterventionDetail = () => {
                 <Text style={styles.description}>{intervention.description || 'Aucune description disponible'}</Text>
                 <Text style={styles.rating}>{intervention.rating}</Text>
             </View>
-            <TouchableOpacity style={styles.invoiceButton}>
+            <TouchableOpacity style={styles.invoiceButton} onPress={createAndShowPDF}>
                 <Text style={styles.invoiceButtonText}>Afficher la facture</Text>
             </TouchableOpacity>
         </ScrollView>
@@ -39,7 +168,7 @@ const styles = StyleSheet.create({
     },
     backButton: {
         position: 'absolute',
-        top: 40, // Ajuster la marge en haut
+        top: 40,
         left: 20,
         backgroundColor: '#0041C4',
         padding: 10,
@@ -54,7 +183,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginTop: 80, // Ajouter une marge en haut pour compenser le bouton de retour
+        marginTop: 80,
         marginBottom: 20,
         textAlign: 'center',
     },
@@ -110,6 +239,24 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     invoiceButtonText: {
+        fontSize: 16,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    pdfHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#f2f2f2',
+        padding: 10,
+    },
+    pdfButton: {
+        backgroundColor: '#0041C4',
+        padding: 10,
+        borderRadius: 10,
+        marginHorizontal: 5,
+    },
+    pdfButtonText: {
         fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
