@@ -72,7 +72,7 @@ function ProInfo({ route, navigation }) {
                 photos: "imageUrls", // Assurez-vous que c'est un tableau ou un format compatible
                 rating:'.',
                 price:'.',
-                status : "new"
+                status : "current"
             };
 
         set(newInterventionRef,newIntervention)

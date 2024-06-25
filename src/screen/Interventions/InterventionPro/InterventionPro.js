@@ -1,74 +1,134 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Dimensions } from 'react-native';
-
+import { database, auth } from '../../../../firebase';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
-import logoverif from '../../../../assets/shield-check-fill.png';
-import photoprofil from '../../../../assets/account-circle-fill.png';
-
+import { ref, onValue } from 'firebase/database';
+import { onAuthStateChanged } from 'firebase/auth';
+ 
 const { width } = Dimensions.get('window');
-
-function InterventionPro({ navigation }) {
-
-    // const navigation = useNavigation();
+ 
+const Interventions = () => {
+    const navigation = useNavigation();
+    const [currentInterventions, setCurrentInterventions] = useState([]);
+    const [pastInterventions, setPastInterventions] = useState([]);
+    const [userId, setUserId] = useState(null);
+ 
+    useEffect(() => {
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('UID DE USR',user.uid);
+                setUserId(user.uid);
+            } else {
+                // Rediriger l'utilisateur vers la page de connexion s'il n'est pas authentifié
+                navigation.navigate('Login');
+            }
+        });
+ 
+        return () => unsubscribeAuth();
+    }, [navigation]);
+ 
+    useEffect(() => {
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('UID DE USR', user.uid);
+                setUserId(user.uid);
+            } else {
+                navigation.navigate('Login');
+            }
+        });
     
-    const DetailInter = () => {
-        navigation.navigate('DetailInterventionPro');
+        return () => unsubscribeAuth();
+    }, [navigation]);
+    
+    useEffect(() => {
+        if (userId) {
+            const interventionsRef = ref(database, 'interventions');
+
+            const unsubscribe = onValue(interventionsRef, (snapshot) => {
+                const interventions = [];
+                snapshot.forEach((userSnapshot) => {
+                    console.log('User Snapshot:', userSnapshot.val());
+                    userSnapshot.forEach((interventionSnapshot) => {
+                        const data = interventionSnapshot.val();
+                        console.log('Intervention Data:', data);
+                        if (data.pro_id === userId) {
+                            interventions.push({ ...data, id: interventionSnapshot.key });
+                        }
+                    });
+                });
+
+                console.log('Filtered Interventions:', interventions);
+
+                const current = interventions.filter(intervention => intervention.status === 'current');
+                const past = interventions.filter(intervention => intervention.status === 'past');
+
+                setCurrentInterventions(current);
+                setPastInterventions(past);
+            });
+
+            return () => unsubscribe();
+        }
+    }, [userId]);
+    
+ 
+    const handlePress = (intervention, isCurrent) => {
+        if (isCurrent) {
+            navigation.navigate('InterventionEnCours', { intervention });
+        } else {
+            navigation.navigate('InterventionDetail', { intervention });
+        }
     };
-    
+
+    const handleEvaluatePress = () => {
+        navigation.navigate('InterventionEval');
+    };
+
+ 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Interventions</Text>
-                <View style={styles.content}>
-
-                    <ScrollView contentContainerStyle={styles.contentContainer}>
-                        <View style={styles.intervSection}>
-                            <Text style={styles.intervName}>Intervention en cours</Text>
-                            <TouchableOpacity style={styles.intervItem} onPress={DetailInter}>
+            <View style={styles.content}>
+                <ScrollView contentContainerStyle={styles.contentContainer}>
+                    <View style={styles.intervSection}>
+                        <Text style={styles.intervName}>Intervention en cours</Text>
+                        {currentInterventions.length > 0 ? currentInterventions.map((intervention) => (
+                            <TouchableOpacity key={intervention.id} style={styles.intervItem} onPress={() => handlePress(intervention, true)}>
                                 <View style={styles.intervItemContent}>
                                     <View>
-                                        <Text style={styles.intervItemTitle}>Plombier</Text>
-                                        <Text style={styles.intervItemSubtitle}>Changement de robinet</Text>
+                                        <Text style={styles.intervItemTitle}>{intervention.title}</Text>
+                                        <Text style={styles.intervItemSubtitle}>{intervention.subtitle}</Text>
                                     </View>
-                                    <Text style={styles.intervItemDuration}>30mn</Text>
+                                    <Text style={styles.intervItemDuration}>{intervention.duration}</Text>
                                 </View>
                             </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.intervSection}>
-                            <Text style={styles.intervName}>Interventions passées</Text>
-                            <TouchableOpacity style={styles.passeItem}>
+                        )) : (
+                            <Text style={styles.noIntervText}>Aucune intervention en cours</Text>
+                        )}
+                    </View>
+ 
+                    <View style={styles.intervSection}>
+                        <Text style={styles.intervName}>Interventions passées</Text>
+                        {pastInterventions.length > 0 ? pastInterventions.map((intervention) => (
+                            <TouchableOpacity key={intervention.id} style={styles.passeItem} onPress={() => handlePress(intervention, false)}>
                                 <View style={styles.passeItemContent}>
                                     <View>
-                                        <Text style={styles.passeItemTitle}>Plombier</Text>
-                                        <Text style={styles.passeItemSubtitle}>Changement de robinet</Text>
+                                        <Text style={styles.passeItemTitle}>{intervention.title}</Text>
+                                        <Text style={styles.passeItemSubtitle}>{intervention.subtitle}</Text>
+                                        <Text style={styles.passeItemSubtitle}>{intervention.rating}</Text>
                                     </View>
-                                    <View style={styles.passeItemEvaluerContainer}>
-                                        <Text style={styles.passeItemEvaluer}>Evaluer</Text>
-                                    </View>
+                                    <Text style={styles.passeitemdate}>{intervention.date}</Text>
                                 </View>
                             </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.passeItem}>
-                                <View style={styles.passeItemContent}>
-                                    <View>
-                                        <Text style={styles.passeItemTitle}>Plombier</Text>
-                                        <Text style={styles.passeItemSubtitle}>Changement de robinet</Text>
-                                        <Text style={styles.passeItemSubtitle}>5/5★</Text>
-                                    </View>
-                                    <Text style={styles.passeitemdate}>24/05/2023</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-
-                        
-                    </ScrollView>
-
-                </View>
+                        )) : (
+                            <Text style={styles.noIntervText}>Aucune intervention passée</Text>
+                        )}
+                    </View>
+                </ScrollView>
+            </View>
         </View>
     );
-}
-
+};
+ 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -81,7 +141,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         color: '#fff',
         paddingHorizontal: '5%',
-
     },
     content: {
         flex: 1,
@@ -92,8 +151,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         flexGrow: 1,
     },
-
-     intervSection: {
+    intervSection: {
         marginTop: 20,
         paddingHorizontal: width * 0.05,
     },
@@ -132,7 +190,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
-
     passeItem: {
         backgroundColor: '#fff',
         paddingTop: 5,
@@ -162,14 +219,13 @@ const styles = StyleSheet.create({
         color: '#000',
         fontWeight: 'bold',
     },
-
     passeitemdate: {
         fontSize: 14,
         color: '#000',
         fontWeight: 'bold',
     },
     passeItemEvaluerContainer: {
-        backgroundColor: '#69C236', 
+        backgroundColor: '#69C236',
         paddingVertical: 4,
         paddingHorizontal: 11,
         borderRadius: 10,
@@ -178,6 +234,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'white',
     },
+    noIntervText: {
+        fontSize: 16,
+        color: '#000',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
 });
-
-export default InterventionPro;
+ 
+export default Interventions;
