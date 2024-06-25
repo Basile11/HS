@@ -1,3 +1,4 @@
+// src/screen/Interventions/Interventions.js
 import { database, auth } from '../../../firebase';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
@@ -48,8 +49,12 @@ const Interventions = () => {
         }
     }, [userId]);
 
-    const handlePress = (intervention) => {
-        navigation.navigate('InterventionDetail', { intervention });
+    const handlePress = (intervention, isCurrent) => {
+        if (isCurrent) {
+            navigation.navigate('InterventionEnCours', { intervention });
+        } else {
+            navigation.navigate('InterventionDetail', { intervention });
+        }
     };
 
     return (
@@ -60,7 +65,7 @@ const Interventions = () => {
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Intervention en cours</Text>
                         {currentInterventions.length > 0 ? currentInterventions.map((intervention) => (
-                            <TouchableOpacity key={intervention.id} style={styles.intervItem} onPress={() => handlePress(intervention)}>
+                            <TouchableOpacity key={intervention.id} style={styles.intervItem} onPress={() => handlePress(intervention, true)}>
                                 <View style={styles.intervItemContent}>
                                     <View>
                                         <Text style={styles.intervItemTitle}>{intervention.title}</Text>
@@ -77,7 +82,7 @@ const Interventions = () => {
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Interventions passées</Text>
                         {pastInterventions.length > 0 ? pastInterventions.map((intervention) => (
-                            <TouchableOpacity key={intervention.id} style={styles.passeItem} onPress={() => handlePress(intervention)}>
+                            <TouchableOpacity key={intervention.id} style={styles.passeItem} onPress={() => handlePress(intervention, false)}>
                                 <View style={styles.passeItemContent}>
                                     <View>
                                         <Text style={styles.passeItemTitle}>{intervention.title}</Text>

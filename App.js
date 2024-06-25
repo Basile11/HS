@@ -19,6 +19,7 @@ import NavBarPro from './src/components/NavBar/NavBarPro';
 
 import Interventions from './src/screen/Interventions/Interventions'; // Importer Interventions
 import InterventionDetail from './src/screen/Interventions/InterventionDetail'; // Importer InterventionDetail
+import InterventionEnCours from './src/screen/Interventions/InterventionEnCours';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,7 +45,7 @@ export default function App() {
         <Stack.Screen name="UrgenceFinal" component={UrgenceFinal} />
         <Stack.Screen name="Interventions" component={Interventions} />
         <Stack.Screen name="InterventionDetail" component={InterventionDetail} options={{ title: 'Historique' }} />
-    
+        <Stack.Screen name="InterventionEnCours" component={InterventionEnCours} />
 
       </Stack.Navigator>
     </NavigationContainer>
