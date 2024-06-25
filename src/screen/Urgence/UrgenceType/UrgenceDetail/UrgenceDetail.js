@@ -10,6 +10,7 @@ const { width } = Dimensions.get('window');
 
 function UrgenceDetail({ route, navigation }) {
     const { service, emergency } = route.params;
+    
     const [problemDescription, setProblemDescription] = useState('');
     const [estimatedTime, setEstimatedTime] = useState('');
     const [images, setImages] = useState([]);

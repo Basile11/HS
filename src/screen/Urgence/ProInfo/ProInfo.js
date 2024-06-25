@@ -23,20 +23,22 @@ function ProInfo({ route, navigation }) {
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Image source={flecheretour} style={styles.flechestyle} />
                 </TouchableOpacity>
-                <Text style={styles.header}>Électricien</Text>
+                <Text style={styles.header}>{service}</Text>
             </View>
             <View style={styles.content}>
                 <ScrollView contentContainerStyle={styles.contentContainer}>
                     <View style={styles.profileContainer}>
                         <View style={styles.textContainer}>
-                            <Text style={styles.name}>{pro.name}</Text>
-                            <Text style={styles.details}>{`Électricien - ${pro.rating} ★\nDepuis 2019 sur HS`}</Text>
+                        <Text style={styles.name}>{pro.firstName} {pro.lastName}</Text>
+                        <Text style={styles.detail}>Problem: {problemDescription}</Text>
+                         <Text style={styles.detail}>Estimated Time: {estimatedTime}</Text>
+                        <Text style={styles.detail}>Price: {pro.price || 'N/A'}</Text>
+                        <Text style={styles.details}>{service}{pro.rating} ★ Depuis 2019 sur HS</Text>
                         </View>
                         <Image source={photoprofil} style={styles.photoprofil} />
                     </View>
-
                     <Text style={styles.description}>
-                        Je suis expérimenté pour effectuer des dépannages électriques dans ou en dehors de votre logement. Je suis un pro depuis 10 ans.
+                    {pro.additionalInfo}
                     </Text>
                     <View style={styles.infoContainer}>
                         <View style={styles.infoBox}>
