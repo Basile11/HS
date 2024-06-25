@@ -16,6 +16,7 @@ const Interventions = () => {
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
+                console.log('UID DE USR',user.uid);
                 setUserId(user.uid);
             } else {
                 // Rediriger l'utilisateur vers la page de connexion s'il n'est pas authentifié
@@ -28,7 +29,7 @@ const Interventions = () => {
  
     useEffect(() => {
         if (userId) {
-            const interventionsRef = ref(database, `interventions/${userId}`);
+            const interventionsRef = ref(database, 'interventions/'+userId);
  
             const unsubscribe = onValue(interventionsRef, (snapshot) => {
                 const interventions = [];

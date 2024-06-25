@@ -4,7 +4,7 @@ import flecheretour from '../../../../assets/arrow-left-line.png';
 import photoprofil from '../../../../assets/account-circle-fill.png';
 import Carte from '../../../../assets/Carte.png'
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import { getDatabase, ref, set, get, push } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
@@ -59,6 +59,7 @@ function ProInfo({ route, navigation }) {
         console.log("ceci est l'adresse de l'user connecté",user.address);
         console.log(pro.uid);
         const interventionRef = ref(db,'interventions/'+user.uid);
+        const newInterventionRef = push(interventionRef);
         //const imageUrls = await uploadImages(images);
 
             const newIntervention = {
@@ -74,7 +75,7 @@ function ProInfo({ route, navigation }) {
                 status : "new"
             };
 
-        set(interventionRef,newIntervention)
+        set(newInterventionRef,newIntervention)
             .then(() => console.log('Intervention ajoutée'))
             .catch(error=>console.error('Erreur',error));
         
