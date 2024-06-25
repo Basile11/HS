@@ -1,8 +1,8 @@
 import { database, auth } from '../../../firebase';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, update } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
  
 const { width } = Dimensions.get('window');
@@ -12,7 +12,12 @@ const Interventions = () => {
     const [currentInterventions, setCurrentInterventions] = useState([]);
     const [pastInterventions, setPastInterventions] = useState([]);
     const [userId, setUserId] = useState(null);
- 
+
+// NOUVEAU
+    const [newIntervention, setNewIntervention] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+
+
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -42,7 +47,15 @@ const Interventions = () => {
  
                 setCurrentInterventions(current);
                 setPastInterventions(past);
+
+// NOUVEAU
+                const newIntervention = interventions.find(intervention => intervention.status === 'new');
+                if (newIntervention) {
+                    setNewIntervention(newIntervention);
+                    setModalVisible(true);
+                }
             });
+////
  
             return () => unsubscribe();
         }
@@ -58,6 +71,27 @@ const Interventions = () => {
 
     const handleEvaluatePress = () => {
         navigation.navigate('InterventionEval');
+    };
+
+// NOUVEAU
+    const handleAccept = () => {
+        // Update the intervention status to 'current'
+        const interventionRef = ref(database, `interventions/${userId}/${newIntervention.id}`);
+
+        // interventionRef.update({ status: 'current' });
+        update(interventionRef, { status: 'current' });
+
+        setModalVisible(false);
+    };
+
+// NOUVEAU
+    const handleDecline = () => {
+        // Update the intervention status to 'declined'
+        const interventionRef = ref(database, `interventions/${userId}/${newIntervention.id}`);
+        update(interventionRef, { status: 'declined' });
+
+        // interventionRef.update({ status: 'declined' });
+        setModalVisible(false);
     };
 
  
@@ -102,6 +136,33 @@ const Interventions = () => {
                     </View>
                 </ScrollView>
             </View>
+            <Modal
+                visible={modalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Nouvelle Intervention !</Text>
+                        {newIntervention && (
+                            <>
+                                <Text style={styles.modalInterTitle}>{newIntervention.subtitle}</Text>
+                                <Text style={styles.modalText}>{newIntervention.description}</Text>
+                                <Text style={styles.modalAdresse}>{newIntervention.adresse}</Text>
+                                </>
+                        )}
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity style={styles.modalButtonacc} onPress={handleAccept}>
+                                <Text style={styles.modalButtonText}>Accepter</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.modalButtonref} onPress={handleDecline}>
+                                <Text style={styles.modalButtonText}>Refuser</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -216,6 +277,67 @@ const styles = StyleSheet.create({
         color: '#000',
         textAlign: 'center',
         marginVertical: 10,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 10,
+        // alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalInterTitle: {
+        fontSize: 18,
+        marginBottom: 10,
+        fontWeight:'bold'
+    },    
+    modalText: {
+        fontSize: 16,
+        marginBottom: 20,
+        color:'#969696'
+    },    
+    modalAdresse: {
+        fontSize: 16,
+        marginBottom: 10,
+        fontWeight:'bold',
+        fontStyle:'italic'
+        // color:'#969696'
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    modalButtonacc: {
+        flex: 1,
+        marginHorizontal: 5,
+        padding: 10,
+        backgroundColor: '#69C236',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    modalButtonref: {
+        flex: 1,
+        marginHorizontal: 5,
+        padding: 10,
+        backgroundColor: '#C23636',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    modalButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight:'bold',
     },
 });
  

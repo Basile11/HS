@@ -1,19 +1,53 @@
 // src/components/InterventionDetail.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, onValue } from 'firebase/database';
 import * as Print from 'expo-print';
 import * as FileSystem from 'expo-file-system';
 import { WebView } from 'react-native-webview';
 import * as Sharing from 'expo-sharing';
-
+ 
 const InterventionDetail = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { intervention } = route.params;
     const [pdfUri, setPdfUri] = useState(null);
-
+    const [userData, setUserData] = useState(null);
+    const [proData, setProData] = useState(null);
+ 
+    useEffect(() => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+ 
+        if (user) {
+            const database = getDatabase();
+            const userRef = ref(database, 'users/' + user.uid);
+ 
+            onValue(userRef, (snapshot) => {
+                const data = snapshot.val();
+                setUserData(data);
+            });
+        }
+ 
+        if (intervention.pro_id) {
+            const database = getDatabase();
+            const proRef = ref(database, 'professionnel/' + intervention.pro_id);
+ 
+            onValue(proRef, (snapshot) => {
+                const data = snapshot.val();
+                setProData(data);
+            });
+        }
+    }, [intervention.pro_id]);
+ 
     const createAndShowPDF = async () => {
+        if (!userData || !proData) {
+            Alert.alert('Erreur', 'Les informations utilisateur ou professionnel ne sont pas encore chargées');
+            return;
+        }
+ 
         const template = `
         <!DOCTYPE html>
         <html>
@@ -95,15 +129,15 @@ const InterventionDetail = () => {
                 </div>
                 <div class="details">
                     <div class="hs-details">
-                        <p>HS</p>
-                        <p>Adresse de HS</p>
-                        <p>Ville, Code Postal</p>
-                        <p>Email de HS</p>
-                        <p>Téléphone de HS</p>
+                        <p>${proData.firstName} ${proData.lastName}</p>
+                        <p>${proData.address}</p>
+                        <p>${proData.city}, ${proData.postalCode}</p>
+                        <p>${proData.email}</p>
+                        <p>${proData.phoneNumber}</p>
                     </div>
                     <div class="client-details">
-                        <p>Nom du client: John Doe</p>
-                        <p>Adresse: 123 Main Street, City</p>
+                        <p>Nom du client: ${userData.firstName} ${userData.lastName}</p>
+                        <p>Adresse: ${userData.address}, ${userData.city}, ${userData.postalCode}</p>
                     </div>
                 </div>
                 <div class="invoice-details">
@@ -135,7 +169,7 @@ const InterventionDetail = () => {
         </body>
         </html>
         `;
-
+ 
         try {
             const { uri } = await Print.printToFileAsync({ html: template });
             const pdfUri = await FileSystem.getContentUriAsync(uri);
@@ -145,7 +179,7 @@ const InterventionDetail = () => {
             Alert.alert('Erreur', 'Une erreur est survenue lors de la génération du PDF');
         }
     };
-
+ 
     const sharePDF = async () => {
         if (pdfUri) {
             await Sharing.shareAsync(pdfUri);
@@ -153,7 +187,7 @@ const InterventionDetail = () => {
             Alert.alert('Erreur', 'Aucun PDF à partager');
         }
     };
-
+ 
     if (pdfUri) {
         return (
             <View style={{ flex: 1 }}>
@@ -176,7 +210,7 @@ const InterventionDetail = () => {
             </View>
         );
     }
-
+ 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -199,7 +233,7 @@ const InterventionDetail = () => {
         </ScrollView>
     );
 };
-
+ 
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
@@ -303,5 +337,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
+ 
 export default InterventionDetail;
