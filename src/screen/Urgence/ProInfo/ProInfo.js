@@ -1,19 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView } from 'react-native';
 import flecheretour from '../../../../assets/arrow-left-line.png';
 import photoprofil from '../../../../assets/account-circle-fill.png';
 import Carte from '../../../../assets/Carte.png'
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getDatabase, ref, set, get } from 'firebase/database';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 const { width } = Dimensions.get('window');
 
 function ProInfo({ route, navigation }) {
     const { pro, service, problemDescription, estimatedTime, images, emergency } = route.params;
 
+    //On prend les infos de l'utilisateur connecté pour compléter les infos de l'interentions
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const auth = getAuth();
+        onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                const db = getDatabase();
+                const userRef = ref(db, 'users/'+firebaseUser.uid);
+                const userSnapshot = await get(userRef);
+                if (userSnapshot.exists()) {
+                    const userData = userSnapshot.val();
+                    const fullAddress = `${userData.address}, ${userData.city}`;
+                    setUser({
+                        uid: firebaseUser.uid,
+                        address: fullAddress
+                    });
+                } else {
+                    console.log("User data not found");
+                }
+            } else {
+                console.log("No user is signed in.");
+                setUser(null);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        // Vérifiez les données du professionnel pour vous assurer que l'UID est présent
+        console.log('Professional Data icicicici:', pro);
+    }, [pro]);
+
+    if (!user) {
+        return <Text>Loading...</Text>; // ou tout autre indicateur de chargement
+      }    
+    
     const handleBack = () => {
         navigation.goBack();
     };
 
+    const ajtInt=async() =>{
+        const db = getDatabase();
+        console.log("ceci est l'id de l'user connecté",user.uid);
+        console.log("ceci est l'adresse de l'user connecté",user.address);
+        console.log(pro.uid);
+        const interventionRef = ref(db,'interventions/'+user.uid);
+        //const imageUrls = await uploadImages(images);
+
+            const newIntervention = {
+                pro_id: pro.uid,
+                subtitle: emergency,
+                title: service,
+                location: user.address,
+                date: ".",
+                duration: estimatedTime,
+                photos: "imageUrls", // Assurez-vous que c'est un tableau ou un format compatible
+                rating:'.',
+                price:'.',
+                status : "new"
+            };
+
+        set(interventionRef,newIntervention)
+            .then(() => console.log('Intervention ajoutée'))
+            .catch(error=>console.error('Erreur',error));
+        
+    };
+
     const handleReserve = () => {
+        ajtInt();
         navigation.navigate('UrgenceFinal', { service, problemDescription, estimatedTime, images, emergency });
     };
 

@@ -26,9 +26,8 @@ function ProDispo({ route, navigation }) {
         onValue(professionalsRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                const filteredProfessionals = Object.values(data);
+                const filteredProfessionals = Object.keys(data).map(key => ({ uid: key, ...data[key] }));
                 setProfessionals(filteredProfessionals);
-                console.log("Filtered professionals:", filteredProfessionals);
             } else {
                 console.log("No data found for the given service:", service);
             }
