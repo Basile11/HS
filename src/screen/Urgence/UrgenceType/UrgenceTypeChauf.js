@@ -14,8 +14,9 @@ function UrgenceType({ route, navigation }) {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
     };
     
+    const service = 'chauffagiste';
     const navigateToDetail = (emergency) => {
-        navigation.navigate('UrgenceDetail', { emergency });
+        navigation.navigate('UrgenceDetail', { emergency, service });
     };
 
     return (
