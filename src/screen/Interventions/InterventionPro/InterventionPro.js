@@ -8,8 +8,13 @@ import photoprofil from '../../../../assets/account-circle-fill.png';
 
 const { width } = Dimensions.get('window');
 
-const InterventionPro = () => {
-    const navigation = useNavigation();
+function InterventionPro({ navigation }) {
+
+    // const navigation = useNavigation();
+    
+    const DetailInter = () => {
+        navigation.navigate('DetailInterventionPro');
+    };
     
     return (
         <View style={styles.container}>
@@ -19,7 +24,7 @@ const InterventionPro = () => {
                     <ScrollView contentContainerStyle={styles.contentContainer}>
                         <View style={styles.intervSection}>
                             <Text style={styles.intervName}>Intervention en cours</Text>
-                            <TouchableOpacity style={styles.intervItem}>
+                            <TouchableOpacity style={styles.intervItem} onPress={DetailInter}>
                                 <View style={styles.intervItemContent}>
                                     <View>
                                         <Text style={styles.intervItemTitle}>Plombier</Text>

@@ -55,6 +55,9 @@ const Interventions = () => {
         } else {
             navigation.navigate('InterventionDetail', { intervention });
         }
+    
+    const handleEvaluatePress = () => {
+        navigation.navigate('InterventionEval');
     };
 
     return (
@@ -100,7 +103,7 @@ const Interventions = () => {
             </View>
         </View>
     );
-};
+};}
 
 const styles = StyleSheet.create({
     container: {
