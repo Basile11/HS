@@ -101,8 +101,6 @@ function SignUp() {
                 additionalInfo: form.additionalInfo,
                 phoneNumber: form.phoneNumber,
                 job : selectedJob,
-                isProfessional : true,
-                isParticulier : false
             });
             console.log('Form Submitted', form);
             navigation.navigate('SignIn'); // Navigate to the SignIn page
