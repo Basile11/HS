@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TextInput, TouchableOpacity, Image, ScrollView, Alert, FlatList, Modal, Button } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import Signature from 'react-native-signature-canvas';
 
-import flecheretour from '../../../../../assets/arrow-left-line.png'
-import flecheretourbleu from '../../../../../assets/arrow-left-line (1).png'
-import poubelle from '../../../../../assets/delete-bin-2-line.png'
+
+import flecheretour from '../../../../assets/arrow-left-line.png'
+import flecheretourbleu from '../../../../assets/arrow-left-line (1).png'
+import poubelle from '../../../../assets/delete-bin-2-line.png'
 
 const { width } = Dimensions.get('window');
 
-function UrgenceDetail({ route, navigation }) {
-    const { service, emergency } = route.params;
-    
+function TerminerInter({ navigation }) {
+    // const { service, emergency } = route.params;
     const [problemDescription, setProblemDescription] = useState('');
     const [estimatedTime, setEstimatedTime] = useState('');
     const [images, setImages] = useState([]);
     // const [image, setImage] = useState([]);
     const [modalVisible, setModalVisible] = useState(false); // État pour gérer la visibilité de la modal
     const [selectedImage, setSelectedImage] = useState(''); // État pour stocker l'URI de l'image sélectionnée
-
-    const displayEmergency = emergency === 'Autre' ? 'Quel est votre problème ?' : emergency;
+    const [signature, setSignature] = useState(null);
 
     const handleBack = () => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
@@ -50,15 +50,17 @@ function UrgenceDetail({ route, navigation }) {
         setImages(updatedImages);
         setModalVisible(false);
     };
-    
-    const handleSearchProfessional = () => {
-        navigation.navigate('ProDispo', {
-            service,
-            problemDescription,
-            estimatedTime,
-            images,
-            emergency
-        });
+
+    const gotoHome = () => {
+        navigation.navigate('NavBarPro');
+    };
+
+    const handleSignature = (signature) => {
+        setSignature(signature);
+    };
+
+    const handleClear = () => {
+        setSignature(null);
     };
 
     return (
@@ -67,14 +69,12 @@ function UrgenceDetail({ route, navigation }) {
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Image source={flecheretour} style={styles.flechestyle} />
                 </TouchableOpacity>
-                <Text style={styles.header}>{service}</Text>
+                <Text style={styles.header}>Terminer l'intervention</Text>
             </View>
             <View style={styles.content}>
                 <ScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text style={styles.greeting}>{displayEmergency}</Text>
 
-
-                <Text style={styles.label}>Explication du problème :</Text>
+                <Text style={styles.label}>Description de l'intervention</Text>
                     <TextInput
                         style={styles.textInput}
                         multiline
@@ -83,7 +83,7 @@ function UrgenceDetail({ route, navigation }) {
                         onChangeText={setProblemDescription}
                     />
 
-                    <Text style={styles.label}>Estimation du temps d'intervention :</Text>
+                    <Text style={styles.label}>Durée de l'intervention :</Text>
                     <View style={styles.timeButtonsContainer}>
                         {['30 mn', '1 h', '1 h 30', '2 h', '+'].map((time) => (
                             <TouchableOpacity
@@ -105,6 +105,34 @@ function UrgenceDetail({ route, navigation }) {
                     </View>
 
 
+                    {/* <TouchableOpacity onPress={pickImage} >
+                        <Text style={styles.addButtonText}>Ajouter une photo</Text>
+                    </TouchableOpacity>
+
+                    <FlatList
+                        horizontal={true} // Configurez la FlatList pour qu'elle ait une direction horizontale
+                        data={images}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity onPress={() => openImageModal(item)}>
+                                <Image source={{ uri: item }} style={styles.image} />
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={(item, index) => index.toString()}
+                        contentContainerStyle={styles.imagesContainer} // Style de conteneur pour la FlatList
+                    /> */}
+
+                    <Text style={styles.label}>Signature du client</Text>
+                    <View style={styles.signatureContainer}>
+                        <Signature
+                            onOK={handleSignature}
+                            onClear={handleClear}
+                            descriptionText=""
+                            clearText="Clear"
+                            confirmText="Save"
+                            webStyle={styles.signatureWebStyle}
+                        />
+                    </View>
+
                     <TouchableOpacity onPress={pickImage} >
                         <Text style={styles.addButtonText}>Ajouter une photo</Text>
                     </TouchableOpacity>
@@ -121,8 +149,8 @@ function UrgenceDetail({ route, navigation }) {
                         contentContainerStyle={styles.imagesContainer} // Style de conteneur pour la FlatList
                     />
 
-                    <TouchableOpacity onPress={handleSearchProfessional} style={styles.searchButton}>
-                        <Text style={styles.searchButtonText}>Rechercher un professionnel</Text>
+                    <TouchableOpacity style={styles.searchButton}>
+                        <Text style={styles.searchButtonText}  onPress={gotoHome} >Terminer l'intervention</Text>
                     </TouchableOpacity>
 
                     <Modal
@@ -189,6 +217,7 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         flexGrow: 1,
+        marginTop: width*0.07
     },
     greeting: {
         fontSize: 30,
@@ -207,7 +236,7 @@ const styles = StyleSheet.create({
 
     label: {
         fontSize: 15,
-        marginBottom: 10,
+        marginBottom: width*0.01,
         fontWeight:'500',
         color: '#969696'
     },
@@ -268,6 +297,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight:'bold',
         marginBottom:10,
+        paddingTop:width*0.05
     },
 
 
@@ -277,6 +307,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
         margin:width*0.1,
+        marginTop:width*0.05
     },
     searchButtonText: {
         color: '#fff',
@@ -325,6 +356,38 @@ const styles = StyleSheet.create({
         width: width * 0.08, 
         height: width * 0.08,
     },
+    signatureTitle: {
+        fontSize: 14,
+        color: '#000',
+        fontWeight:'bold',
+        marginBottom: width * 0.01,
+        marginTop: width * 0.02
+    },
+    signatureContainer: {
+        width: '100%',
+        height: 200,
+        borderColor: '#0041C4',
+        borderWidth: 1,
+        // marginBottom: width * 0.05,
+    },
+    signatureWebStyle: `
+        .m-signature-pad {
+            box-shadow: none;
+            border: none;
+            border-radius: 20px;
+        }
+        .m-signature-pad--body {
+            border: none;
+            border-radius: 20px;
+        }
+        .m-signature-pad--footer {
+            display: none;
+            margin: 0px;
+        }
+        body,html {
+            width: 100%; height: 100%;
+        }
+    `,
 });
 
-export default UrgenceDetail;
+export default TerminerInter;
