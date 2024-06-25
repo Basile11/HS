@@ -1,19 +1,18 @@
-// src/screen/Interventions/Interventions.js
 import { database, auth } from '../../../firebase';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ref, onValue } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
-
+ 
 const { width } = Dimensions.get('window');
-
+ 
 const Interventions = () => {
     const navigation = useNavigation();
     const [currentInterventions, setCurrentInterventions] = useState([]);
     const [pastInterventions, setPastInterventions] = useState([]);
     const [userId, setUserId] = useState(null);
-
+ 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -23,43 +22,45 @@ const Interventions = () => {
                 navigation.navigate('Login');
             }
         });
-
+ 
         return () => unsubscribeAuth();
     }, [navigation]);
-
+ 
     useEffect(() => {
         if (userId) {
             const interventionsRef = ref(database, `interventions/${userId}`);
-
+ 
             const unsubscribe = onValue(interventionsRef, (snapshot) => {
                 const interventions = [];
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
                     interventions.push({ ...data, id: childSnapshot.key });
                 });
-
+ 
                 const current = interventions.filter(intervention => intervention.status === 'current');
                 const past = interventions.filter(intervention => intervention.status === 'past');
-
+ 
                 setCurrentInterventions(current);
                 setPastInterventions(past);
             });
-
+ 
             return () => unsubscribe();
         }
     }, [userId]);
-
+ 
     const handlePress = (intervention, isCurrent) => {
         if (isCurrent) {
             navigation.navigate('InterventionEnCours', { intervention });
         } else {
             navigation.navigate('InterventionDetail', { intervention });
         }
-    
+    };
+
     const handleEvaluatePress = () => {
         navigation.navigate('InterventionEval');
     };
 
+ 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Interventions</Text>
@@ -81,7 +82,7 @@ const Interventions = () => {
                             <Text style={styles.noIntervText}>Aucune intervention en cours</Text>
                         )}
                     </View>
-
+ 
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Interventions passées</Text>
                         {pastInterventions.length > 0 ? pastInterventions.map((intervention) => (
@@ -103,8 +104,8 @@ const Interventions = () => {
             </View>
         </View>
     );
-};}
-
+};
+ 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     passeItemEvaluerContainer: {
-        backgroundColor: '#69C236', 
+        backgroundColor: '#69C236',
         paddingVertical: 4,
         paddingHorizontal: 11,
         borderRadius: 10,
@@ -217,5 +218,5 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
 });
-
+ 
 export default Interventions;
