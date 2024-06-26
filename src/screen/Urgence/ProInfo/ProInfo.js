@@ -112,7 +112,7 @@ function ProInfo({ route, navigation }) {
                 photos: imageUrls, // Use the uploaded image URLs
                 rating: '.',
                 price: '.',
-                status: "current",
+                status: "new",
                 description: problemDescription,
             };
 
