@@ -53,37 +53,104 @@ function ProInfo({ route, navigation }) {
         navigation.goBack();
     };
 
-    const ajtInt=async() =>{
+    // const ajtInt=async() =>{
+    //     const db = getDatabase();
+    //     console.log("ceci est l'id de l'user connecté",user.uid);
+    //     console.log("ceci est l'adresse de l'user connecté",user.address);
+    //     console.log(pro.uid);
+    //     const interventionRef = ref(db,'interventions/'+user.uid);
+    //     const newInterventionRef = push(interventionRef);
+    //     //const imageUrls = await uploadImages(images);
+
+    //         const newIntervention = {
+    //             pro_id: pro.uid,
+    //             subtitle: emergency,
+    //             title: service,
+    //             location: user.address,
+    //             date: ".",
+    //             duration: estimatedTime,
+    //             photos: "imageUrls", // Assurez-vous que c'est un tableau ou un format compatible
+    //             rating:'.',
+    //             price:'.',
+    //             status : "current"
+    //         };
+
+    //     set(newInterventionRef,newIntervention)
+    //         .then(() => console.log('Intervention ajoutée'))
+    //         .catch(error=>console.error('Erreur',error));
+        
+    // };
+
+ 
+    const ajtInt = async () => {
         const db = getDatabase();
-        console.log("ceci est l'id de l'user connecté",user.uid);
-        console.log("ceci est l'adresse de l'user connecté",user.address);
-        console.log(pro.uid);
-        const interventionRef = ref(db,'interventions/'+user.uid);
-        const newInterventionRef = push(interventionRef);
-        //const imageUrls = await uploadImages(images);
+        const storage = getStorage();
+        console.log("User ID:", user.uid);
+        console.log("User address:", user.address);
+        console.log("Professional UID:", pro.uid);
+
+        // Obtenez la date actuelle
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+        console.log("Test date");
+
+        try {
+            // Upload images and get their URLs
+            const imageUrls = await uploadImages(images);
+
+            const interventionRef = ref(db, 'interventions/' + user.uid);
+            const newInterventionRef = push(interventionRef);
 
             const newIntervention = {
                 pro_id: pro.uid,
                 subtitle: emergency,
                 title: service,
                 location: user.address,
-                date: ".",
+                date: formattedDate,
                 duration: estimatedTime,
-                photos: "imageUrls", // Assurez-vous que c'est un tableau ou un format compatible
-                rating:'.',
-                price:'.',
-                status : "current"
+                photos: imageUrls, // Use the uploaded image URLs
+                rating: '.',
+                price: '.',
+                status: "current",
+                description: problemDescription,
             };
 
-        set(newInterventionRef,newIntervention)
-            .then(() => console.log('Intervention ajoutée'))
-            .catch(error=>console.error('Erreur',error));
-        
+            console.log("New Intervention:", newIntervention);
+
+            await set(newInterventionRef, newIntervention);
+            console.log('Intervention ajoutée');
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
     };
 
     const handleReserve = () => {
         ajtInt();
         navigation.navigate('UrgenceFinal', { service, problemDescription, estimatedTime, images, emergency });
+    };
+
+    // Function to upload images to Firebase Storage and return their URLs
+    const uploadImages = async (images) => {
+        const storage = getStorage();
+        const imageUrls = [];
+
+        for (const image of images) {
+            try {
+                const response = await fetch(image);
+                const blob = await response.blob();
+                const imageRef = storageRef(storage, `interventions/${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+                await uploadBytes(imageRef, blob);
+                const url = await getDownloadURL(imageRef);
+                imageUrls.push(url);
+                console.log('Image uploaded:', url);
+            } catch (error) {
+                console.error('Image upload error:', error);
+                throw error; // Re-throw the error to be caught in ajtInt
+            }
+        }
+
+        return imageUrls;
     };
 
     return (

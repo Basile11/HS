@@ -242,6 +242,15 @@ const InterventionDetail = () => {
                         <Text style={styles.descriptionTitle}>Description :</Text>
                         <Text style={styles.description}>{intervention.description || 'Aucune description disponible'}</Text>
                         <Text style={styles.rating}>Avis : {intervention.rating}</Text>
+
+                        {/* Display images */}
+                        {intervention.photos && intervention.photos.length > 0 && (
+                            <View style={styles.imagesContainer}>
+                                {intervention.photos.map((photoUrl, index) => (
+                                    <Image key={index} source={{ uri: photoUrl }} style={styles.image} />
+                                ))}
+                            </View>
+                        )}
                     </View>
                     <TouchableOpacity style={styles.invoiceButton} onPress={createAndShowPDF}>
                         <Text style={styles.invoiceButtonText}>Afficher la facture</Text>
@@ -356,6 +365,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
+    },
+    imagesContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingVertical: width * 0.1
+    },
+    image: {
+        width: width * 0.4,
+        height: width * 0.5,
+        borderRadius: 10,
+        marginBottom: 10,
     },
 });
  
