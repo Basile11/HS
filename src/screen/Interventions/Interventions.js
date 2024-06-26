@@ -274,8 +274,9 @@ const styles = StyleSheet.create({
     },
     noIntervText: {
         fontSize: 16,
-        color: '#000',
-        textAlign: 'center',
+        color: '#969696',
+        // textAlign: 'center',
+        fontStyle:'italic',
         marginVertical: 10,
     },
     modalOverlay: {

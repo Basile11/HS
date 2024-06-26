@@ -1,6 +1,6 @@
 // src/components/InterventionDetail.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Image, Alert, Platform } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { getDatabase, ref, onValue } from 'firebase/database';
@@ -9,6 +9,10 @@ import * as FileSystem from 'expo-file-system';
 import { WebView } from 'react-native-webview';
 import * as Sharing from 'expo-sharing';
  
+import flecheretour from '../../../assets/arrow-left-line.png'
+const { width } = Dimensions.get('window');
+
+
 const InterventionDetail = () => {
     const route = useRoute();
     const navigation = useNavigation();
@@ -17,6 +21,10 @@ const InterventionDetail = () => {
     const [userData, setUserData] = useState(null);
     const [proData, setProData] = useState(null);
  
+    const handleBack = () => {
+        navigation.goBack(); // Fonction de navigation pour revenir en arrière
+    };
+    
     useEffect(() => {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -212,61 +220,78 @@ const InterventionDetail = () => {
     }
  
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                <Text style={styles.backButtonText}>{"< Retour"}</Text>
-            </TouchableOpacity>
-            <Text style={styles.header}>Intervention du {intervention.date}</Text>
-            <View style={styles.card}>
-                <View style={styles.row}>
-                    <Text style={styles.title}>{intervention.title}</Text>
-                    <Text style={styles.price}>{intervention.price || ''} €</Text>
-                </View>
-                <Text style={styles.subtitle}>{intervention.subtitle}</Text>
-                <Text style={styles.descriptionTitle}>Description :</Text>
-                <Text style={styles.description}>{intervention.description || 'Aucune description disponible'}</Text>
-                <Text style={styles.rating}>{intervention.rating}</Text>
+        <View style={styles.container}>
+
+            <View style={styles.headerContainer}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                    <Image source={flecheretour} style={styles.flechestyle} />
+                </TouchableOpacity>
+                <Text style={styles.header}>{intervention.date}</Text>
             </View>
-            <TouchableOpacity style={styles.invoiceButton} onPress={createAndShowPDF}>
-                <Text style={styles.invoiceButtonText}>Afficher la facture</Text>
-            </TouchableOpacity>
-        </ScrollView>
+
+            <View style={styles.content}>
+
+
+                <ScrollView contentContainerStyle={styles.contentContainer}>
+                    {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                        <Text style={styles.backButtonText}>{"< Retour"}</Text>
+                    </TouchableOpacity> */}
+                    {/* <Text style={styles.header}>Intervention du {intervention.date}</Text> */}
+                    <View style={styles.card}>
+                        <View style={styles.row}>
+                            <Text style={styles.title}>{intervention.title}</Text>
+                            <Text style={styles.price}>{intervention.price || ''} €</Text>
+                        </View>
+                        <Text style={styles.subtitle}>{intervention.subtitle}</Text>
+                        <Text style={styles.descriptionTitle}>Description :</Text>
+                        <Text style={styles.description}>{intervention.description || 'Aucune description disponible'}</Text>
+                        <Text style={styles.rating}>Avis : {intervention.rating}</Text>
+                    </View>
+                    <TouchableOpacity style={styles.invoiceButton} onPress={createAndShowPDF}>
+                        <Text style={styles.invoiceButtonText}>Afficher la facture</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </View> 
+        </View>
     );
 };
  
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#f2f2f2',
+        flex: 1,
+        paddingTop: '20%',
+        backgroundColor: '#0041C4',
+    },
+    headerContainer: {
+        flexDirection: 'row',
     },
     backButton: {
-        position: 'absolute',
-        top: 40,
-        left: 20,
-        backgroundColor: '#0041C4',
-        padding: 10,
-        borderRadius: 10,
-        zIndex: 1,
-    },
-    backButtonText: {
-        fontSize: 16,
-        color: '#fff',
-        fontWeight: 'bold',
+        height: 30, 
     },
     header: {
-        fontSize: 24,
+        fontSize: 25,
         fontWeight: 'bold',
-        marginTop: 80,
-        marginBottom: 20,
-        textAlign: 'center',
+        marginBottom: 15,
+        color: '#fff',
+        paddingHorizontal: '3%',
     },
-    card: {
+    flechestyle: {
+        width: width * 0.10, 
+        height: width * 0.10,
+        borderRadius: 25,
+        marginLeft: 10,
+    },
+
+    content: {
+        flex: 1,
         backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 20,
-        marginBottom: 20,
-        marginTop: 10,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingHorizontal: width * 0.05,
+        paddingVertical: width * 0.05, 
+    },
+    contentContainer: {
+        flexGrow: 1,
     },
     row: {
         flexDirection: 'row',
@@ -275,19 +300,20 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     title: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: '#0041C4',
+        // color: '#0041C4',
     },
     price: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
         color: '#0041C4',
     },
     subtitle: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 10,
+        fontSize: 18,
+        // color: '#666',
+        marginBottom: 30,
+        fontStyle:'italic'
     },
     descriptionTitle: {
         fontSize: 16,

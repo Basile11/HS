@@ -145,9 +145,6 @@ function Compte({ navigation }) {
                             <Text style={styles.buttonText}>Sign Out</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button} onPress={goToHome}>
-                            <Text style={styles.buttonText}>Maison</Text>
-                        </TouchableOpacity>
                     </ScrollView>
 
                 </View>
