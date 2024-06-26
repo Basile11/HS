@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 
 import flecheretour from '../../../assets/arrow-left-line.png';
 import { signInWithEmailAndPassword, sendPasswordResetEmail, getAuth } from 'firebase/auth';
+import { ref, get, child } from 'firebase/database';
 import {app, auth, database} from '../../../firebase';
 
 const { width } = Dimensions.get('window');
 
 function SignIn({ navigation }) {
+    let valeur = 0;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isProfessional, setIsProfessional] = useState(false);
@@ -62,14 +64,33 @@ function SignIn({ navigation }) {
 
                 // Vérifiez le type d'utilisateur après la connexion et naviguez en conséquence
                 if (isProfessional) {
-                    navigation.navigate('NavBarPro'); // Navigate to NavBarPro for professionals
+                    checkUserType('professionnel', user.uid);
                 } else {
-                    navigation.navigate('NavBar'); // Navigate to NavBar for particuliers
+                    checkUserType('users', user.uid);
                 }
             } catch (error) {
                 console.error('Error signing in: ', error);
             }
         }
+    };
+
+    const checkUserType = (userType, uid) => {
+        const dbRef = ref(database);
+        get(child(dbRef, `${userType}/${uid}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                console.log(`User exists in ${userType} table`);
+                if (userType === 'professionnel') {
+                    navigation.navigate('NavBarPro');
+                } else {
+                    navigation.navigate('NavBar');
+                }
+            } else {
+                console.log(`User does not exist in ${userType} table`);
+                Alert.alert('Erreur', 'Utilisateur non trouvé.');
+            }
+        }).catch((error) => {
+            console.error('Error checking user type: ', error);
+        });
     };
 
     const handleBack = () => {
@@ -100,7 +121,7 @@ function SignIn({ navigation }) {
 
                             <TouchableOpacity
                                 style={[styles.choiceButton, isProfessional ? styles.selectedButton : styles.unselectedButton]}
-                                onPress={() => { setIsProfessional(true); setIsParticulier(false); }}>
+                                onPress={() => { setIsProfessional(true); setIsParticulier(false); valeur = 1}}>
                                 <Text style={[styles.choiceButtonText, isProfessional ? styles.selectedButtonText : styles.unselectedButtonText]}>Professionnel</Text>
                             </TouchableOpacity>
                         </View>
