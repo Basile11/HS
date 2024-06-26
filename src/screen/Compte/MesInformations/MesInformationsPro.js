@@ -9,7 +9,7 @@ import {app, auth, database} from '../../../../firebase';
 
 const { width } = Dimensions.get('window');
 
-const MesInformations = ({ navigation }) => {
+const MesInformationsPro = ({ navigation }) => {
     const handleBack = () => {
         navigation.goBack(); // Fonction de navigation pour revenir en arrière
     };
@@ -182,4 +182,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MesInformations;
+export default MesInformationsPro;

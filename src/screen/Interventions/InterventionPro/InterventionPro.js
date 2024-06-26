@@ -1,76 +1,71 @@
 import { database, auth } from '../../../../firebase';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ref, onValue } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
- 
+
 const { width } = Dimensions.get('window');
- 
+
 const Interventions = () => {
     const navigation = useNavigation();
     const [currentInterventions, setCurrentInterventions] = useState([]);
     const [pastInterventions, setPastInterventions] = useState([]);
     const [userId, setUserId] = useState(null);
- 
+
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log('UID DE USR',user.uid);
                 setUserId(user.uid);
             } else {
                 // Rediriger l'utilisateur vers la page de connexion s'il n'est pas authentifié
                 navigation.navigate('Login');
             }
         });
- 
-        return () => unsubscribeAuth();
-    }, [navigation]);
- 
-    useEffect(() => {
-        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log('UID DE USR', user.uid);
-                setUserId(user.uid);
-            } else {
-                navigation.navigate('Login');
-            }
-        });
-    
-        return () => unsubscribeAuth();
-    }, [navigation]);
-    
-    useEffect(() => {
-        if (userId) {
-            const interventionsRef = ref(database, 'interventions');
 
-            const unsubscribe = onValue(interventionsRef, (snapshot) => {
-                const interventions = [];
-                snapshot.forEach((userSnapshot) => {
-                    console.log('User Snapshot:', userSnapshot.val());
-                    userSnapshot.forEach((interventionSnapshot) => {
-                        const data = interventionSnapshot.val();
-                        console.log('Intervention Data:', data);
-                        if (data.pro_id === userId) {
-                            interventions.push({ ...data, id: interventionSnapshot.key });
-                        }
+        return () => {
+            unsubscribeAuth();
+        };
+    }, [navigation]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            let unsubscribe;
+            if (userId) {
+                const interventionsRef = ref(database, 'interventions');
+
+                unsubscribe = onValue(interventionsRef, (snapshot) => {
+                    const interventions = [];
+                    snapshot.forEach((userSnapshot) => {
+                        userSnapshot.forEach((interventionSnapshot) => {
+                            const data = interventionSnapshot.val();
+                            if (data.pro_id === userId) {
+                                interventions.push({ ...data, id: interventionSnapshot.key });
+                            }
+                        });
                     });
+
+
+                    const current = interventions.filter(intervention => intervention.status === 'current');
+                    const past = interventions.filter(intervention => intervention.status === 'past');
+
+                    setCurrentInterventions(current);
+                    setPastInterventions(past);
+                }, (error) => {
+                    console.log('Error reading database:', error);
                 });
 
-                console.log('Filtered Interventions:', interventions);
+                return () => {
+                    if (unsubscribe) {
+                        unsubscribe();
+                    }
+                };
+            } else {
+                console.log('User ID is not set yet.');
+            }
+        }, [userId])
+    );
 
-                const current = interventions.filter(intervention => intervention.status === 'current');
-                const past = interventions.filter(intervention => intervention.status === 'past');
-
-                setCurrentInterventions(current);
-                setPastInterventions(past);
-            });
-
-            return () => unsubscribe();
-        }
-    }, [userId]);
-    
- 
     const handlePress = (intervention, isCurrent) => {
         if (isCurrent) {
             navigation.navigate('InterventionEnCours', { intervention });
@@ -83,7 +78,6 @@ const Interventions = () => {
         navigation.navigate('InterventionEval');
     };
 
- 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Interventions</Text>
@@ -105,7 +99,7 @@ const Interventions = () => {
                             <Text style={styles.noIntervText}>Aucune intervention en cours</Text>
                         )}
                     </View>
- 
+
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Interventions passées</Text>
                         {pastInterventions.length > 0 ? pastInterventions.map((intervention) => (
@@ -128,7 +122,7 @@ const Interventions = () => {
         </View>
     );
 };
- 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -241,5 +235,5 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
 });
- 
+
 export default Interventions;

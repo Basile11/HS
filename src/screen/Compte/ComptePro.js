@@ -14,7 +14,7 @@ import {app, auth, database} from '../../../firebase';
 const { width } = Dimensions.get('window');
 
 // const Compte = () => {
-function Compte({ navigation }) {
+function ComptePro({ navigation }) {
 
     // const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
@@ -144,10 +144,6 @@ function Compte({ navigation }) {
                         <TouchableOpacity style={styles.button} onPress={handleSignOut}>
                             <Text style={styles.buttonText}>Sign Out</Text>
                         </TouchableOpacity>
-
-                        <TouchableOpacity style={styles.button} onPress={goToHome}>
-                            <Text style={styles.buttonText}>Maison</Text>
-                        </TouchableOpacity>
                     </ScrollView>
 
                 </View>
@@ -260,4 +256,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Compte;
+export default ComptePro;
