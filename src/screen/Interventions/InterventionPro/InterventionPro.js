@@ -205,7 +205,7 @@ const handleDecline = async () => {
 
                     <View style={styles.intervSection}>
                         <Text style={styles.intervName}>Intervention en attente de payement</Text>
-                        {currentInterventions.length > 0 ? currentInterventions.map((intervention) => (
+                        {bePaidInterventions.length > 0 ? bePaidInterventions.map((intervention) => (
                             <TouchableOpacity key={intervention.id} style={styles.intervItem} onPress={() => handlePress(intervention, true)}>
                                 <View style={styles.intervItemContent}>
                                     <View>
