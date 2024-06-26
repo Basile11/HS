@@ -72,8 +72,6 @@ function SignUp() {
                 additionalInfo: form.additionalInfo,
                 phoneNumber: form.phoneNumber,
                 job:'',
-                isProfessional : false,
-                isParticulier : true
             });
             console.log('Form Submitted', form);
             navigation.navigate('SignIn'); // Navigate to the SignIn page

@@ -8,6 +8,7 @@ import SignIn from './src/screen/SignIn/SignIn';
 import SignUp from './src/screen/SignUp/SignUp';
 
 import MesInformations from './src/screen/Compte/MesInformations/MesInformations';
+import MesInformationsPro from './src/screen/Compte/MesInformations/MesInformationsPro';
 import UrgenceTypeSerr from './src/screen/Urgence/UrgenceType/UrgenceTypeSerr';
 import UrgenceTypeDerat from './src/screen/Urgence/UrgenceType/UrgenceTypeDerat';
 import UrgenceTypePlomb from './src/screen/Urgence/UrgenceType/UrgenceTypePlomb';
@@ -44,6 +45,7 @@ export default function App() {
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="NavBarPro" component={NavBarPro} />
         <Stack.Screen name="MesInformations" component={MesInformations} />
+        <Stack.Screen name="MesInformationsPro" component={MesInformationsPro} />
 
         <Stack.Screen name="UrgenceTypeChauf" component={UrgenceTypeChauf} />
         <Stack.Screen name="UrgenceTypePlomb" component={UrgenceTypePlomb} />
