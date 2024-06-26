@@ -233,11 +233,7 @@ const InterventionDetail = () => {
 
 
                 <ScrollView contentContainerStyle={styles.contentContainer}>
-                    {/* <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                        <Text style={styles.backButtonText}>{"< Retour"}</Text>
-                    </TouchableOpacity> */}
-                    {/* <Text style={styles.header}>Intervention du {intervention.date}</Text> */}
-                    <View style={styles.card}>
+                   <View style={styles.card}>
                         <View style={styles.row}>
                             <Text style={styles.title}>{intervention.title}</Text>
                             <Text style={styles.price}>{intervention.price || ''} €</Text>
@@ -302,7 +298,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        // color: '#0041C4',
     },
     price: {
         fontSize: 22,

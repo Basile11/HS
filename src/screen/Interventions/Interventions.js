@@ -42,7 +42,8 @@ const Interventions = () => {
                     interventions.push({ ...data, id: childSnapshot.key });
                 });
  
-                const current = interventions.filter(intervention => intervention.status === 'current');
+                const current = interventions.filter(intervention => intervention.status === 'current' || intervention.status === 'bePaid');
+
                 const past = interventions.filter(intervention => intervention.status === 'past');
  
                 setCurrentInterventions(current);
@@ -63,7 +64,7 @@ const Interventions = () => {
  
     const handlePress = (intervention, isCurrent) => {
         if (isCurrent) {
-            navigation.navigate('InterventionEnCours', { intervention });
+            navigation.navigate('InterventionEnCours', { intervention, userId });
         } else {
             navigation.navigate('InterventionDetail', { intervention });
         }
@@ -109,7 +110,13 @@ const Interventions = () => {
                                         <Text style={styles.intervItemTitle}>{intervention.title}</Text>
                                         <Text style={styles.intervItemSubtitle}>{intervention.subtitle}</Text>
                                     </View>
-                                    <Text style={styles.intervItemDuration}>{intervention.duration}</Text>
+                                    {intervention.status === 'bePaid' ? (
+                                        <View style={styles.payBox}>
+                                            <Text style={styles.payText}>Payer</Text>
+                                        </View>
+                                    ) : (
+                                        <Text style={styles.intervItemDuration}>{intervention.duration}</Text>
+                                    )}
                                 </View>
                             </TouchableOpacity>
                         )) : (
@@ -339,6 +346,17 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight:'bold',
+    },
+    payBox: {
+        backgroundColor: 'red',
+        paddingVertical: 4,
+        paddingHorizontal: 11,
+        borderRadius: 10,
+    },
+    payText: {
+        fontSize: 14,
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
  
