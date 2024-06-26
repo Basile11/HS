@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, ScrollView, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
 import Signature from 'react-native-signature-canvas';
 import { Picker } from '@react-native-picker/picker';
-
+import { ref, update } from 'firebase/database';
+import { database } from '../../../../firebase';
 import flecheretour from '../../../../assets/arrow-left-line.png';
 import flecheretourbleu from '../../../../assets/arrow-left-line (1).png'
 
@@ -10,7 +11,9 @@ import Carte from '../../../../assets/Carte.png';
 
 const { width } = Dimensions.get('window');
 
-function DetailInterventionPro({ navigation }) {
+function DetailInterventionPro({ navigation, route }) {
+    const { intervention } = route.params;
+
     const handleBack = () => {
         navigation.goBack();
     };
@@ -49,17 +52,38 @@ function DetailInterventionPro({ navigation }) {
         }
     };
 
+    const handleSubmitQuote = async () => {
+        if (intervention) {
+            const interventionRef = ref(database, `interventions/${intervention.userKey}/${intervention.id}`);
+            console.log('Intervention Ref:', interventionRef);
+
+            try {
+                await update(interventionRef, {
+                    status: 'bePaid',
+                    price: amount,
+                    duration: temporaryDuration,
+                    signature: signature,
+                });
+                console.log('Intervention updated successfully');
+                setIsQuoteDone(true);
+                setModalVisible(false);
+            } catch (error) {
+                console.error('Error updating intervention:', error);
+            }
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Image source={flecheretour} style={styles.flechestyle} />
                 </TouchableOpacity>
-                <Text style={styles.header}>Électricien</Text>
+                <Text style={styles.header}>{intervention.title}</Text>
             </View>
             <View style={styles.content}>
                 <ScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text style={styles.greeting}>Changement de robinet</Text>
+                    <Text style={styles.greeting}>{intervention.subtitle}</Text>
 
                     <Text style={styles.descriptiontitle}>Description :</Text>
                     <Text style={styles.description}>Mon fils a cassé le robinet en le confondant avec le trampoline.</Text>
@@ -90,11 +114,11 @@ function DetailInterventionPro({ navigation }) {
                         </View> */}
                         <View style={styles.infoBox}>
                             <Text style={styles.infoTitle}>{isQuoteDone ? 'Tarif' : 'Tarif annoncé'}</Text>
-                            <Text style={styles.infoValue}>{amount}</Text>
+                            <Text style={styles.infoValue}>{intervention.price}</Text>
                         </View>
                         <View style={styles.infoBox}>
                             <Text style={styles.infoTitle}>{isQuoteDone ? 'Durée' : 'Durée estimée'}</Text>
-                            <Text style={styles.infoValue}>{duration}</Text>
+                            <Text style={styles.infoValue}>{intervention.duration}</Text>
                         </View>
 
                     </View>
@@ -102,7 +126,7 @@ function DetailInterventionPro({ navigation }) {
                             <Text style={styles.quoteDoneText}>Devis effectué</Text>
                         )}
 
-                    <Text style={styles.location}>Brunoy</Text>
+                    <Text style={styles.location}>{intervention.location}</Text>
                     <Image source={Carte} style={styles.mapImage} />
 
                     <View style={{ alignItems: 'center' }}>
@@ -203,6 +227,7 @@ function DetailInterventionPro({ navigation }) {
                                         onPress={() => {
                                             setIsQuoteDone(true);
                                             setModalVisible(false);
+                                            handleSubmitQuote(); 
                                         }}
                                     >
                                         <Text style={styles.submitButtonText}>Valider ce devis</Text>

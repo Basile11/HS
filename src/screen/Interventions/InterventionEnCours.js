@@ -66,7 +66,18 @@ const InterventionEnCours = () => {
                         <Text style={styles.subtitle}>{intervention.subtitle}</Text>
                         <Text style={styles.descriptionTitle}>Description :</Text>
                         <Text style={styles.description}>{intervention.description || 'Aucune description disponible'}</Text>
-                        <Text style={styles.rappel}>Photo ? Pro infos ? Lieux ? Durée ?</Text>
+                        {/* <Text style={styles.rappel}>Pro infos ? Lieux ? Durée ?</Text> */}
+
+                        {/* Display images */}
+                        {intervention.photos && intervention.photos.length > 0 && (
+                            <View style={styles.imagesContainer}>
+                                {intervention.photos.map((photoUrl, index) => (
+                                    <Image key={index} source={{ uri: photoUrl }} style={styles.image} />
+                                ))}
+                            </View>
+                        )}
+
+
                     </View>
                     {/* <TouchableOpacity style={styles.invoiceButton} >
                         <Text style={styles.invoiceButtonText}>Payer l'intervention</Text>
@@ -170,6 +181,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
+    },
+    imagesContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        paddingVertical: width * 0.1
+    },
+    image: {
+        width: width * 0.4,
+        height: width * 0.5,
+        borderRadius: 10,
+        marginBottom: 10,
     },
     rappel:{
         fontSize: 16,

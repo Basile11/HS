@@ -11,6 +11,7 @@ const Interventions = () => {
     const navigation = useNavigation();
     const [currentInterventions, setCurrentInterventions] = useState([]);
     const [pastInterventions, setPastInterventions] = useState([]);
+    const [bePaidInterventions, setBePaidInterventions] = useState([]);
     const [userId, setUserId] = useState(null);
 
 // NOUVEAU
@@ -43,7 +44,7 @@ const Interventions = () => {
                     interventions.push({ ...data, id: childSnapshot.key });
                 });
  
-                const current = interventions.filter(intervention => intervention.status === 'current' || intervention.status === 'bePaid');
+                const current = interventions.filter(intervention => intervention.status === 'current' || intervention.status === 'bePaid'|| intervention.status === 'new');
 
                 const past = interventions.filter(intervention => intervention.status === 'past');
  
@@ -51,11 +52,7 @@ const Interventions = () => {
                 setPastInterventions(past);
 
 // NOUVEAU
-                const newIntervention = interventions.find(intervention => intervention.status === 'new');
-                if (newIntervention) {
-                    setNewIntervention(newIntervention);
-                    setModalVisible(true);
-                }
+                
             });
 ////
  
@@ -76,25 +73,7 @@ const Interventions = () => {
     };
 
 // NOUVEAU
-    const handleAccept = () => {
-        // Update the intervention status to 'current'
-        const interventionRef = ref(database, `interventions/${userId}/${newIntervention.id}`);
-
-        // interventionRef.update({ status: 'current' });
-        update(interventionRef, { status: 'current' });
-
-        setModalVisible(false);
-    };
-
-// NOUVEAU
-    const handleDecline = () => {
-        // Update the intervention status to 'declined'
-        const interventionRef = ref(database, `interventions/${userId}/${newIntervention.id}`);
-        update(interventionRef, { status: 'declined' });
-
-        // interventionRef.update({ status: 'declined' });
-        setModalVisible(false);
-    };
+    
 
  
     return (
@@ -144,33 +123,7 @@ const Interventions = () => {
                     </View>
                 </ScrollView>
             </View>
-            <Modal
-                visible={modalVisible}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Nouvelle Intervention !</Text>
-                        {newIntervention && (
-                            <>
-                                <Text style={styles.modalInterTitle}>{newIntervention.subtitle}</Text>
-                                <Text style={styles.modalText}>{newIntervention.description}</Text>
-                                <Text style={styles.modalAdresse}>{newIntervention.adresse}</Text>
-                                </>
-                        )}
-                        <View style={styles.modalButtons}>
-                            <TouchableOpacity style={styles.modalButtonacc} onPress={handleAccept}>
-                                <Text style={styles.modalButtonText}>Accepter</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.modalButtonref} onPress={handleDecline}>
-                                <Text style={styles.modalButtonText}>Refuser</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+            
         </View>
     );
 };
