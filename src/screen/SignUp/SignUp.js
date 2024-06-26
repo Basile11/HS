@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
-import {ref, set} from 'firebase/database'
-import {app, auth, database} from '../../../firebase';
-
-
-
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { ref, set } from 'firebase/database';
+import { auth, database } from '../../../firebase';
 import flecheretour from '../../../assets/arrow-left-line.png';
-
 
 const { width } = Dimensions.get('window');
 
@@ -41,29 +37,70 @@ function SignUp() {
 
     const handleSignUp = async () => {
         if (isFormValid()) {
-            // Handle sign-up logic here
             try {
-            const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-            const user = userCredential.user;
+                const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+                const user = userCredential.user;
 
-            await set(ref(database, 'users/' +user.uid),{
-                firstName: form.firstName,
-                lastName: form.lastName,
-                email: form.email,
-                city: form.city,
-                postalCode: form.postalCode,
-                address: form.address,
-                additionalInfo: form.additionalInfo,
-                phoneNumber: form.phoneNumber,
-                isProfessional : false,
-                isParticulier : true
-            });
-            console.log('Form Submitted', form);
-            navigation.navigate('SignIn'); // Navigate to the SignIn page
-            }catch (error) {
+                const userData = {
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    email: form.email,
+                    city: form.city,
+                    postalCode: form.postalCode,
+                    address: form.address,
+                    additionalInfo: form.additionalInfo,
+                    phoneNumber: form.phoneNumber,
+                    isProfessional: isProfessional,
+                    isParticulier: isParticulier
+                };
+
+                if (isProfessional) {
+                    userData.schedule = {
+                        "Lundi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Mardi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Mercredi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Jeudi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Vendredi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Samedi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Dimanche": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        }
+                    };
+                }
+
+                await set(ref(database, 'users/' + user.uid), userData);
+
+                console.log('Form Submitted', form);
+                navigation.navigate('SignIn'); // Navigate to the SignIn page
+            } catch (error) {
                 console.error('Error registering user: ', error);
-              }
-            
+            }
         }
     };
 
@@ -223,9 +260,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         flexGrow: 1,
     },
-
-
-    choicecontainer: {
+    choiceContainer: {
         marginBottom: 20,
     },
     choiceText: {
@@ -263,9 +298,6 @@ const styles = StyleSheet.create({
     unselectedButtonText: {
         color: '#0041C4',
     },
-
-
-
     inputContainer: {
         width: '100%',
         marginBottom: width*0.05,
@@ -278,7 +310,6 @@ const styles = StyleSheet.create({
         borderRadius: 13,
         marginBottom: 10,
     },
-
     submitButton: {
         backgroundColor: '#0041C4',
         paddingVertical: 15,

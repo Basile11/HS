@@ -5,6 +5,7 @@ import { Image } from 'react-native';
 import Urgence from '../../screen/Urgence/Urgence';
 import InterventionPro from '../../screen/Interventions/InterventionPro/InterventionPro';
 import Compte from '../../screen/Compte/Compte';
+import Comptepro from '../../screen/Compte/Comptepro';
 
 import im_urgence from '../../../assets/navbar/alarm-warning-line.png';
 import im_compte from '../../../assets/navbar/user-line.png';
@@ -53,8 +54,8 @@ const BottomTabBar = () => {
         }}
       />
       <Tab.Screen
-        name="Compte"
-        component={Compte}
+        name="Comptepro"
+        component={Comptepro}
         options={{
           tabBarIcon: CompteIcon,
         }}

@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StatusBar} from 'react-native';
+import { StatusBar } from 'react-native';
 
 import Home from './src/screen/Home/Home';
 import SignIn from './src/screen/SignIn/SignIn';
@@ -17,10 +17,11 @@ import UrgenceFinal from './src/screen/Urgence/UrgenceFinal/UrgenceFinal';
 import NavBar from './src/components/NavBar/NavBar';
 import NavBarPro from './src/components/NavBar/NavBarPro';
 
+import Comptepro from './src/screen/Compte/Comptepro'; // Assurez-vous que le chemin est correct
+import Planning from './src/screen/Compte/InfoMetierPro/Planning'; // Assurez-vous que le chemin est correct
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-
 
 export default function App() {
   return (
@@ -29,7 +30,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animationEnabled: false }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="SignUp" component={SignUp} screenOptions={{ headerShown: false }}/>
+        <Stack.Screen name="SignUp" component={SignUp} screenOptions={{ headerShown: false }} />
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="NavBarPro" component={NavBarPro} />
         <Stack.Screen name="MesInformations" component={MesInformations} />
@@ -39,8 +40,9 @@ export default function App() {
         <Stack.Screen name="ProDispo" component={ProDispo} />
         <Stack.Screen name="ProInfo" component={ProInfo} />
         <Stack.Screen name="UrgenceFinal" component={UrgenceFinal} />
-    
 
+        <Stack.Screen name="Comptepro" component={Comptepro} /> 
+        <Stack.Screen name="Planning" component={Planning} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
