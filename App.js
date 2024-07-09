@@ -28,7 +28,7 @@ import NavBarPro from './src/components/NavBar/NavBarPro';
 import Interventions from './src/screen/Interventions/Interventions'; // Importer Interventions
 import InterventionDetail from './src/screen/Interventions/InterventionDetail'; // Importer InterventionDetail
 import InterventionEnCours from './src/screen/Interventions/InterventionEnCours';
-import ComptePro from './src/screen/Compte/Comptepro'; // Importer ComptePro
+import ComptePro from './src/screen/Compte/ComptePro'; // Importer ComptePro
 import Planning from './src/screen/Compte/CompteInfoPro/Planning'; // Importer Planning
 
 const Stack = createStackNavigator();
