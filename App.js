@@ -29,7 +29,7 @@ import Interventions from './src/screen/Interventions/Interventions'; // Importe
 import InterventionDetail from './src/screen/Interventions/InterventionDetail'; // Importer InterventionDetail
 import InterventionEnCours from './src/screen/Interventions/InterventionEnCours';
 // import ComptePro from './src/screen/Compte/Comptepro'; // Importer ComptePro
-import ComptePro from './src/screen/Compte/Comptepro';
+// import ComptePro from './src/screen/Compte/Comptepro';
 
 // import Planning from './src/screen/Compte/CompteInfopro/Planning'; // Importer Planning
 import Planning from './src/screen/Compte/CompteInfoPro/Planning';
@@ -65,7 +65,7 @@ export default function App() {
         <Stack.Screen name="Interventions" component={Interventions} />
         <Stack.Screen name="InterventionDetail" component={InterventionDetail} options={{ title: 'Historique' }} />
         <Stack.Screen name="InterventionEnCours" component={InterventionEnCours} />
-        <Stack.Screen name="ComptePro" component={ComptePro} />
+        {/* <Stack.Screen name="ComptePro" component={ComptePro} /> */}
         <Stack.Screen name="Planning" component={Planning} />
       </Stack.Navigator>
     </NavigationContainer>
