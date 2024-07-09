@@ -21,7 +21,7 @@ function DetailInterventionPro({ navigation, route }) {
     };
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [amount, setAmount] = useState('50 €');
+    const [amount, setAmount] = useState('0');
     const [duration, setDuration] = useState('1 h');
     const [signature, setSignature] = useState(null);
     const [pickerVisible, setPickerVisible] = useState(false);
@@ -172,7 +172,7 @@ function DetailInterventionPro({ navigation, route }) {
                                             <Text style={styles.infoTitle}>Montant</Text>
                                             <TextInput
                                                 style={styles.infoValue}
-                                                value={intervention.price}
+                                                value={amount}
                                                 // onChangeText={setAmount}
                                                 onChangeText={handleAmountChange}
                                                 // keyboardType="numeric"
