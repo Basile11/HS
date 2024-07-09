@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StatusBar} from 'react-native';
+import { StatusBar } from 'react-native';
 
 import Home from './src/screen/Home/Home';
 import SignIn from './src/screen/SignIn/SignIn';
@@ -28,11 +28,11 @@ import NavBarPro from './src/components/NavBar/NavBarPro';
 import Interventions from './src/screen/Interventions/Interventions'; // Importer Interventions
 import InterventionDetail from './src/screen/Interventions/InterventionDetail'; // Importer InterventionDetail
 import InterventionEnCours from './src/screen/Interventions/InterventionEnCours';
+import ComptePro from './src/screen/Compte/Comptepro'; // Importer ComptePro
+import Planning from './src/screen/Compte/CompteInfoPro/Planning'; // Importer Planning
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-
 
 export default function App() {
   return (
@@ -41,7 +41,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, animationEnabled: false }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="SignUp" component={SignUp} screenOptions={{ headerShown: false }}/>
+        <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="NavBar" component={NavBar} />
         <Stack.Screen name="NavBarPro" component={NavBarPro} />
         <Stack.Screen name="MesInformations" component={MesInformations} />
@@ -62,7 +62,8 @@ export default function App() {
         <Stack.Screen name="Interventions" component={Interventions} />
         <Stack.Screen name="InterventionDetail" component={InterventionDetail} options={{ title: 'Historique' }} />
         <Stack.Screen name="InterventionEnCours" component={InterventionEnCours} />
-
+        <Stack.Screen name="ComptePro" component={ComptePro} />
+        <Stack.Screen name="Planning" component={Planning} />
       </Stack.Navigator>
     </NavigationContainer>
   );

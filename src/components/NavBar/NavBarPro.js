@@ -4,11 +4,13 @@ import { Image } from 'react-native';
 
 import Urgence from '../../screen/Urgence/Urgence';
 import InterventionPro from '../../screen/Interventions/InterventionPro/InterventionPro';
-import ComptePro from '../../screen/Compte/ComptePro';
+import ComptePro from '../../screen/Compte/Comptepro';
 
 import im_urgence from '../../../assets/navbar/alarm-warning-line.png';
 import im_compte from '../../../assets/navbar/user-line.png';
 import im_interventions from '../../../assets/navbar/hammer-line.png';
+
+
 
 const Tab = createBottomTabNavigator();
 
@@ -53,7 +55,7 @@ const BottomTabBar = () => {
         }}
       />
       <Tab.Screen
-        name="Compte"
+        name="ComptePro"
         component={ComptePro}
         options={{
           tabBarIcon: CompteIcon,
