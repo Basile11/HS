@@ -141,8 +141,8 @@ const Planning = ({ navigation }) => {
                 </View>
             </Modal>
 
-            <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('ComptePro')}>
-                <Text style={styles.homeButtonText}>Retour à la page d'accueil</Text>
+            <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('NavBarPro')}>
+                <Text style={styles.homeButtonText}>Retour</Text>
             </TouchableOpacity>
         </View>
     );
