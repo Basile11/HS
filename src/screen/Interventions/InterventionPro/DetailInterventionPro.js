@@ -12,7 +12,9 @@ import Carte from '../../../../assets/Carte.png';
 const { width } = Dimensions.get('window');
 
 function DetailInterventionPro({ navigation, route }) {
-    const { intervention } = route.params;
+    // const { intervention } = route.params;
+    const [intervention, setIntervention] = useState(route.params.intervention);
+    const [temporaryDuration, setTemporaryDuration] = useState(intervention.duration);
 
     const handleBack = () => {
         navigation.goBack();
@@ -23,7 +25,7 @@ function DetailInterventionPro({ navigation, route }) {
     const [duration, setDuration] = useState('1 h');
     const [signature, setSignature] = useState(null);
     const [pickerVisible, setPickerVisible] = useState(false);
-    const [temporaryDuration, setTemporaryDuration] = useState(duration);
+    // const [temporaryDuration, setTemporaryDuration] = useState(duration);
 
     const [isQuoteDone, setIsQuoteDone] = useState(false);
 
@@ -52,6 +54,27 @@ function DetailInterventionPro({ navigation, route }) {
         }
     };
 
+    // const handleSubmitQuote = async () => {
+    //     if (intervention) {
+    //         const interventionRef = ref(database, `interventions/${intervention.userKey}/${intervention.id}`);
+    //         console.log('Intervention Ref:', interventionRef);
+
+    //         try {
+    //             await update(interventionRef, {
+    //                 status: 'bePaid',
+    //                 price: amount,
+    //                 duration: temporaryDuration,
+    //                 signature: signature,
+    //             });
+    //             console.log('Intervention updated successfully');
+    //             setIsQuoteDone(true);
+    //             setModalVisible(false);
+    //         } catch (error) {
+    //             console.error('Error updating intervention:', error);
+    //         }
+    //     }
+    // };
+
     const handleSubmitQuote = async () => {
         if (intervention) {
             const interventionRef = ref(database, `interventions/${intervention.userKey}/${intervention.id}`);
@@ -66,6 +89,11 @@ function DetailInterventionPro({ navigation, route }) {
                 });
                 console.log('Intervention updated successfully');
                 setIsQuoteDone(true);
+                setIntervention(prevState => ({
+                    ...prevState,
+                    price: amount,
+                    duration: temporaryDuration,
+                }));
                 setModalVisible(false);
             } catch (error) {
                 console.error('Error updating intervention:', error);
@@ -86,32 +114,19 @@ function DetailInterventionPro({ navigation, route }) {
                     <Text style={styles.greeting}>{intervention.subtitle}</Text>
 
                     <Text style={styles.descriptiontitle}>Description :</Text>
-                    <Text style={styles.description}>Mon fils a cassé le robinet en le confondant avec le trampoline.</Text>
+                    <Text style={styles.description}>{intervention.description}</Text>
 
-                    <View style={styles.imagesContainer}>
-                        <TouchableOpacity>
-                            <Image style={styles.image} />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image style={styles.image} />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image style={styles.image} />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Image style={styles.image} />
-                        </TouchableOpacity>
-                    </View>
+                    {/* Display images */}
+                    {intervention.photos && intervention.photos.length > 0 && (
+                        <View style={styles.imagesContainer}>
+                            {intervention.photos.map((photoUrl, index) => (
+                                <Image key={index} source={{ uri: photoUrl }} style={styles.image} />
+                            ))}
+                        </View>
+                    )}
 
                     <View style={styles.infoContainer}>
-                        {/* <View style={styles.infoBox}>
-                            <Text style={styles.infoTitle}>{isQuoteDone ? 'Montant' : 'Tarif annoncé'}</Text>
-                            <Text style={styles.infoValue}>~ 50€</Text>
-                        </View>
-                        <View style={styles.infoBox}>
-                            <Text style={styles.infoTitle}>{isQuoteDone ? 'Durée' : 'Durée estimée'}</Text>
-                            <Text style={styles.infoValue}>~ 1 h</Text>
-                        </View> */}
+
                         <View style={styles.infoBox}>
                             <Text style={styles.infoTitle}>{isQuoteDone ? 'Tarif' : 'Tarif annoncé'}</Text>
                             <Text style={styles.infoValue}>{intervention.price}</Text>
@@ -157,7 +172,7 @@ function DetailInterventionPro({ navigation, route }) {
                                             <Text style={styles.infoTitle}>Montant</Text>
                                             <TextInput
                                                 style={styles.infoValue}
-                                                value={amount}
+                                                value={intervention.price}
                                                 // onChangeText={setAmount}
                                                 onChangeText={handleAmountChange}
                                                 // keyboardType="numeric"
@@ -169,7 +184,8 @@ function DetailInterventionPro({ navigation, route }) {
                                         <View style={styles.infoBox}>
                                             <Text style={styles.infoTitle}>Durée</Text>
                                             <TouchableOpacity onPress={() => setPickerVisible(true)}>
-                                                <Text style={styles.infoValue}>{duration}</Text>
+                                                {/* <Text style={styles.infoValue}>{intervention.duration}</Text> */}
+                                                <Text style={styles.infoValue}>{temporaryDuration}</Text>
                                             </TouchableOpacity>
                                             <Modal
                                                 transparent={true}
