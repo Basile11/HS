@@ -10,6 +10,8 @@ import im_urgence from '../../../assets/navbar/alarm-warning-line.png';
 import im_compte from '../../../assets/navbar/user-line.png';
 import im_interventions from '../../../assets/navbar/hammer-line.png';
 
+
+
 const Tab = createBottomTabNavigator();
 
 // Définissez les fonctions pour chaque icône d'onglet
@@ -53,7 +55,7 @@ const BottomTabBar = () => {
         }}
       />
       <Tab.Screen
-        name="Compte"
+        name="ComptePro"
         component={ComptePro}
         options={{
           tabBarIcon: CompteIcon,

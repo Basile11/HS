@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
-import {ref, set} from 'firebase/database'
-import {app, auth, database} from '../../../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { ref, set } from 'firebase/database';
+import { auth, database } from '../../../firebase';
 import { Picker } from '@react-native-picker/picker';
-
-
-
-
 import flecheretour from '../../../assets/arrow-left-line.png';
-
 
 const { width } = Dimensions.get('window');
 
@@ -19,7 +14,6 @@ function SignUp() {
 
     const [selectedJob, setSelectedJob] = useState('');
     const [showJobPicker, setShowJobPicker] = useState(false);
-
 
     const [valeur, setValeur] = useState(0);
 
@@ -47,65 +41,99 @@ function SignUp() {
     const isFormValid = () => {
         const commonFieldsValid = Object.keys(form).filter(key => key !== 'job').every(key => form[key] && form[key].trim() !== '');
 
-    if (isProfessional) {
-        return commonFieldsValid && selectedJob.trim() !== '';
-    }
+        if (isProfessional) {
+            return commonFieldsValid && selectedJob.trim() !== '';
+        }
 
-    return commonFieldsValid;
-        return Object.values(form).every(value => value.trim() !== '');
+        return commonFieldsValid;
     };
 
     const handleSignUpPart = async () => {
         if (isFormValid()) {
-            // Handle sign-up logic here
             try {
-            const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-            const user = userCredential.user;
+                const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+                const user = userCredential.user;
 
-            await set(ref(database, 'users/' +user.uid),{
-                firstName: form.firstName,
-                lastName: form.lastName,
-                email: form.email,
-                city: form.city,
-                postalCode: form.postalCode,
-                address: form.address,
-                additionalInfo: form.additionalInfo,
-                phoneNumber: form.phoneNumber,
-                job:'',
-            });
-            console.log('Form Submitted', form);
-            navigation.navigate('SignIn'); // Navigate to the SignIn page
-            }catch (error) {
+                await set(ref(database, 'users/' + user.uid), {
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    email: form.email,
+                    city: form.city,
+                    postalCode: form.postalCode,
+                    address: form.address,
+                    additionalInfo: form.additionalInfo,
+                    phoneNumber: form.phoneNumber,
+                    job: '',
+                    isProfessional: false,
+                    isParticulier: true
+                });
+                console.log('Form Submitted', form);
+                navigation.navigate('SignIn');
+            } catch (error) {
                 console.error('Error registering user: ', error);
-              }
-            
+            }
         }
     };
 
     const handleSignUpPro = async () => {
         if (isFormValid()) {
-            // Handle sign-up logic here
             try {
-            const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-            const user = userCredential.user;
+                const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+                const user = userCredential.user;
 
-            await set(ref(database, 'professionnel/' +user.uid),{
-                firstName: form.firstName,
-                lastName: form.lastName,
-                email: form.email,
-                city: form.city,
-                postalCode: form.postalCode,
-                address: form.address,
-                additionalInfo: form.additionalInfo,
-                phoneNumber: form.phoneNumber,
-                job : selectedJob,
-            });
-            console.log('Form Submitted', form);
-            navigation.navigate('SignIn'); // Navigate to the SignIn page
-            }catch (error) {
+                await set(ref(database, 'professionnel/' + user.uid), {
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    email: form.email,
+                    city: form.city,
+                    postalCode: form.postalCode,
+                    address: form.address,
+                    additionalInfo: form.additionalInfo,
+                    phoneNumber: form.phoneNumber,
+                    job: selectedJob,
+                    schedule: {
+                        "Lundi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Mardi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Mercredi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Jeudi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Vendredi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Samedi": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        },
+                        "Dimanche": {
+                            "isAvailable": true,
+                            "startTime": "08:30",
+                            "endTime": "17:00"
+                        }
+                    }
+                });
+                console.log('Form Submitted', form);
+                navigation.navigate('SignIn');
+            } catch (error) {
                 console.error('Error registering user: ', error);
-              }
-            
+            }
         }
     };
 
@@ -114,7 +142,7 @@ function SignUp() {
     };
 
     const handleBack = () => {
-        navigation.goBack(); // Navigate back
+        navigation.goBack();
     };
 
     return (
@@ -137,7 +165,7 @@ function SignUp() {
                                     setIsParticulier(true);
                                     setValeur(0);
                                     setShowJobPicker(false);
-                                    setForm({ ...form, job: null }); // Reset job field for Particulier
+                                    setForm({ ...form, job: '' });
                                 }}>
                                 <Text style={[styles.choiceButtonText, isParticulier ? styles.selectedButtonText : styles.unselectedButtonText]}>Particulier</Text>
                             </TouchableOpacity>
@@ -257,38 +285,38 @@ function SignUp() {
             </View>
 
             <Modal
-    visible={showJobPicker}
-    transparent={true}
-    animationType="slide"
->
-    <TouchableWithoutFeedback onPress={() => setShowJobPicker(false)}>
-        <View style={styles.modalContainer}>
-            <TouchableWithoutFeedback>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Sélectionnez votre métier</Text>
-                    <Picker
-                        selectedValue={selectedJob}
-                        onValueChange={(itemValue) => setSelectedJob(itemValue)}
-                        style={styles.picker}
-                    >
-                        <Picker.Item label="Sélectionnez un métier" value="" />
-                        <Picker.Item label="Électricien" value="electricien" />
-                        <Picker.Item label="Chauffagiste" value="chauffagiste" />
-                        <Picker.Item label="Plombier" value="plombier" />
-                        <Picker.Item label="Dératiseur" value="deratiseur" />
-                        <Picker.Item label="Serrurier" value="serrurier" />
-                    </Picker>
-                    <TouchableOpacity
-                        style={styles.closeModalButton}
-                        onPress={() => setShowJobPicker(false)}
-                    >
-                        <Text style={styles.closeModalButtonText}>Valider</Text>
-                    </TouchableOpacity>
-                </View>
-            </TouchableWithoutFeedback>
-        </View>
-    </TouchableWithoutFeedback>
-</Modal>
+                visible={showJobPicker}
+                transparent={true}
+                animationType="slide"
+            >
+                <TouchableWithoutFeedback onPress={() => setShowJobPicker(false)}>
+                    <View style={styles.modalContainer}>
+                        <TouchableWithoutFeedback>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Sélectionnez votre métier</Text>
+                                <Picker
+                                    selectedValue={selectedJob}
+                                    onValueChange={(itemValue) => setSelectedJob(itemValue)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="Sélectionnez un métier" value="" />
+                                    <Picker.Item label="Électricien" value="electricien" />
+                                    <Picker.Item label="Chauffagiste" value="chauffagiste" />
+                                    <Picker.Item label="Plombier" value="plombier" />
+                                    <Picker.Item label="Dératiseur" value="deratiseur" />
+                                    <Picker.Item label="Serrurier" value="serrurier" />
+                                </Picker>
+                                <TouchableOpacity
+                                    style={styles.closeModalButton}
+                                    onPress={() => setShowJobPicker(false)}
+                                >
+                                    <Text style={styles.closeModalButtonText}>Valider</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
         </View>
     );
 }
@@ -329,9 +357,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         flexGrow: 1,
     },
-
-
-    choicecontainer: {
+    choiceContainer: {
         marginBottom: 20,
     },
     choiceText: {
@@ -369,9 +395,6 @@ const styles = StyleSheet.create({
     unselectedButtonText: {
         color: '#0041C4',
     },
-
-
-
     inputContainer: {
         width: '100%',
         marginBottom: width*0.05,
@@ -384,7 +407,6 @@ const styles = StyleSheet.create({
         borderRadius: 13,
         marginBottom: 10,
     },
-
     submitButton: {
         backgroundColor: '#0041C4',
         paddingVertical: 15,
@@ -406,7 +428,6 @@ const styles = StyleSheet.create({
         color: '#0041C4',
         textAlign: 'center',
     },
-
     jobPickerContainer: {
         marginTop: 20,
         marginBottom: 20,
