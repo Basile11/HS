@@ -29,7 +29,7 @@ import Interventions from './src/screen/Interventions/Interventions'; // Importe
 import InterventionDetail from './src/screen/Interventions/InterventionDetail'; // Importer InterventionDetail
 import InterventionEnCours from './src/screen/Interventions/InterventionEnCours';
 // import ComptePro from './src/screen/Compte/Comptepro'; // Importer ComptePro
-import ComptePro from './src/screen/Compte/ComptePro';
+import ComptePro from './src/screen/Compte/Comptepro';
 
 // import Planning from './src/screen/Compte/CompteInfopro/Planning'; // Importer Planning
 import Planning from './src/screen/Compte/CompteInfoPro/Planning';
